@@ -126,6 +126,7 @@ export const getJobsAppliedByUser = async (req, res) => {
 
     // Map through the applications to get the job details along with the status
     const appliedJobs = applications.map((application) => ({
+      applicationId: application._id,
       job: application.job,  // Full job details (title, description, etc.)
       status: application.status,  // Application status (applied, interviewing, rejected, hired)
       appliedAt: application.appliedAt,  // When they applied
