@@ -1,15 +1,13 @@
+// routes/auth.js
 import express from 'express';
-import { registerUser, loginUser } from '../controllers/authController.js'; // Import the controller functions
+import { registerUser, loginUser } from '../controllers/authController.js';
 
 const router = express.Router();
 
 // Register route
-router.post('/register', registerUser);  // Map POST /register to registerUser
+router.post('/register', registerUser);
 
 // Login route
-router.post('/login', loginUser);  // Map POST /login to loginUser
-
-// Remove the Forgot Password Route (it's no longer needed)
- // router.post('/forgot-password', forgotPassword);  // Remove this line
+router.post('/login', loginUser);
 
 export default router;
