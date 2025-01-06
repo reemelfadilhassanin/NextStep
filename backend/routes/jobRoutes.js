@@ -2,6 +2,7 @@
 import express from 'express';
 import { createJob, getJobsByCompany, updateJob, getApplicationCountForJob, getJobsAppliedByUser, applyForJob, updateJobStatus } from '../controllers/jobController.js';
 import { authMiddleware, agentRoleMiddleware } from '../middlewares/authMiddleware.js';  // Named imports
+import { updateApplicationStatus } from '../controllers/applicationController.js'; // Importing the controller
 
 const router = express.Router();
 
@@ -25,5 +26,8 @@ router.get('/user/applications', authMiddleware, getJobsAppliedByUser);
 
 // Route to apply for a job (Authenticated user)
 router.post('/:jobId/apply', authMiddleware, applyForJob);
+
+// Route to update the status of a job application (Authenticated agent only)
+router.put('/applications/:applicationId/status', authMiddleware, agentRoleMiddleware, updateApplicationStatus);
 
 export default router;
