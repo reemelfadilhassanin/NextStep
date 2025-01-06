@@ -1,5 +1,6 @@
+// routes/jobRoutes.js
 import express from 'express';
-import { createJob, getJobsByCompany, updateJob, getApplicationCountForJob, getJobsAppliedByUser, applyForJob } from '../controllers/jobController.js';
+import { createJob, getJobsByCompany, updateJob, getApplicationCountForJob, getJobsAppliedByUser, applyForJob, updateJobStatus } from '../controllers/jobController.js';
 import { authMiddleware, agentRoleMiddleware } from '../middlewares/authMiddleware.js';  // Named imports
 
 const router = express.Router();
@@ -12,6 +13,9 @@ router.get('/', authMiddleware, getJobsByCompany);
 
 // Route to update a job (Authenticated agent only)
 router.put('/:id', authMiddleware, agentRoleMiddleware, updateJob);
+
+// Route to update job status (Authenticated agent only)
+router.put('/:id/status', authMiddleware, agentRoleMiddleware, updateJobStatus);
 
 // Route to get the application count for a specific job
 router.get('/:id/applications/count', authMiddleware, getApplicationCountForJob);

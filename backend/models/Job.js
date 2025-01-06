@@ -11,6 +11,11 @@ const jobSchema = new mongoose.Schema({
     ref: 'User', 
     required: true 
   },
+  status: {
+    type: String,
+    enum: ['open', 'closed', 'paused'],  // Example of statuses
+    default: 'open',
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
