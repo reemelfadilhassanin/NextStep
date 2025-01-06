@@ -23,7 +23,6 @@ h2 {
 }
 
 input, textarea {
-  box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 100%;
@@ -43,10 +42,6 @@ button {
   font-size: 16px;
 }
 
-button:hover {
-  background-color: #45a049;
-}
-
 a {
   color: #4caf50;
   margin-top: 10px;
@@ -59,7 +54,7 @@ a:hover {
   text-decoration: underline;
 }
 
-#loginMessage, #registerMessage, #resetMessage, #profileMessage {
+#registerMessage, #loginMessage, #resetMessage, #profileMessage {
   text-align: center;
   margin-top: 10px;
   font-size: 14px;
@@ -73,22 +68,12 @@ a:hover {
   color: green;
 }
 
-#loginMessage span, #registerMessage span {
-  font-size: 16px;
-  font-weight: bold;
-}
-
 .container {
   border-radius: 10px;
   width: 90%;
-  max-width: 400px;
+  max-width: 500px;
   padding: 30px;
   box-shadow: 0 4px 15px #0000001a;
-}
-
-form {
-  flex-direction: column;
-  display: flex;
 }
 
 form label {
@@ -119,45 +104,50 @@ form button:hover {
   background-color: #0056b3;
 }
 
-#loginMessage {
-  color: red;
+#loginMessage, #registerMessage {
+  text-align: center;
+  margin-top: 15px;
   font-size: 14px;
 }
 
-#registerMessage {
-  color: green;
-  font-size: 14px;
-}
-
-#homeMessage {
-  color: green;
-  margin-top: 10px;
+#loginMessage span, #registerMessage span {
   font-size: 16px;
 }
 
-@media (width <= 600px) {
-  .container {
-    width: 100%;
-    margin: 10px;
-    padding: 20px;
-  }
-
-  h2 {
-    font-size: 20px;
-  }
-
-  input, textarea, button {
-    font-size: 14px;
-  }
+body {
+  font-family: Arial, sans-serif;
 }
 
-input:focus, textarea:focus, button:focus {
-  outline: none;
-  box-shadow: 0 0 5px #007bff80;
+.container {
+  border: 1px solid #ccc;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-a {
-  margin-top: 20px;
-  font-size: 16px;
+form {
+  flex-direction: column;
+  display: flex;
+}
+
+label {
+  margin-bottom: 5px;
+}
+
+input {
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+button {
+  color: #fff;
+  cursor: pointer;
+  background-color: #4caf50;
+  border: none;
+  padding: 10px;
+}
+
+button:hover {
+  background-color: #45a049;
 }
 /*# sourceMappingURL=login.748ad148.css.map */
