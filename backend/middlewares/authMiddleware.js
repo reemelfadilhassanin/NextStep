@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 const authMiddleware = (req, res, next) => {
-  // Get the token from Authorization header
+  // Get the token from the Authorization header
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
@@ -25,4 +25,12 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-export default authMiddleware;
+// Middleware to enforce agent role for certain routes (like posting a job)
+const agentRoleMiddleware = (req, res, next) => {
+  if (req.user.role !== 'agent') {
+    return res.status(403).json({ message: 'Only agents can access this resource' });
+  }
+  next();  // Proceed to the next middleware or controller
+};
+
+export { authMiddleware, agentRoleMiddleware };
