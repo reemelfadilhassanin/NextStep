@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Jobs</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Search Jobs</h2>
+    
+    <!-- Display Profile Information -->
+    <div id="user-profile">
+      <img id="user-profile-image" src="" alt="Profile Image" />
+      <p id="user-name"></p>
+    </div>
+    
+    <!-- Add Job Search Form or Job Listings Here -->
+    <!-- Example of Job Search: -->
+    <form id="job-search-form">
+      <input type="text" id="job-query" placeholder="Search for jobs..." />
+      <button type="submit">Search</button>
+    </form>
+
+    <div id="job-listings">
+      <!-- Display Job Listings Here -->
+    </div>
+  </div>
+
+  <script>
+    // Retrieve user profile information from localStorage
+    const userName = localStorage.getItem('userName');
+    const userProfileImage = localStorage.getItem('userProfileImage');
+
+    // Display the user's profile name and image
+    document.getElementById('user-name').innerText = userName;
+    document.getElementById('user-profile-image').src = userProfileImage || 'default-profile.jpg';  // Use a default if no image
+
+    // Job search functionality (optional)
+    document.getElementById('job-search-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const jobQuery = document.getElementById('job-query').value;
+      alert(`Searching for jobs related to: ${jobQuery}`);
+      // Add logic to handle job search here
+    });
+  </script>
+</body>
+</html>

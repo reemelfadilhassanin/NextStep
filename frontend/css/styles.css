@@ -6,7 +6,7 @@ body {
   padding: 0;
 }
 
-/* Container for both login and home pages */
+/* Container for both login and dashboard pages */
 .container {
   width: 100%;
   max-width: 400px;
@@ -33,7 +33,6 @@ input, textarea {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
-  box-sizing: border-box;
 }
 
 /* Button styles */
@@ -66,7 +65,7 @@ a:hover {
 }
 
 /* Message styles (for errors or success) */
-#loginMessage, #registerMessage, #resetMessage, #profileMessage {
+#registerMessage, #loginMessage, #resetMessage, #profileMessage {
   margin-top: 10px;
   font-size: 14px;
   text-align: center;
@@ -80,15 +79,10 @@ a:hover {
   color: green;
 }
 
-#loginMessage span, #registerMessage span {
-  font-size: 16px;
-  font-weight: bold;
-}
-
 /* Additional container adjustments */
 .container {
   width: 90%;
-  max-width: 400px;
+  max-width: 500px;
   padding: 30px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
@@ -128,52 +122,50 @@ form button:hover {
   background-color: #0056b3;
 }
 
-/* Login page specific styles */
-#loginMessage {
+/* Message style for login or registration result */
+#loginMessage, #registerMessage {
   font-size: 14px;
-  color: red;
+  margin-top: 15px;
+  text-align: center;
 }
 
-#registerMessage {
-  font-size: 14px;
-  color: green;
-}
-
-#homeMessage {
-  margin-top: 10px;
-  font-size: 16px;
-  color: green;
-}
-
-/* Responsive Design for Smaller Screens */
-@media (max-width: 600px) {
-  .container {
-    width: 100%;
-    padding: 20px;
-    margin: 10px;
-  }
-
-  h2 {
-    font-size: 20px;
-  }
-
-  input, textarea {
-    font-size: 14px;
-  }
-
-  button {
-    font-size: 14px;
-  }
-}
-
-/* Add a shadow to input fields and buttons when focused for better accessibility */
-input:focus, textarea:focus, button:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* A bit of margin for the Sign-Up link to give it spacing */
-a {
-  margin-top: 20px;
+#loginMessage span, #registerMessage span {
   font-size: 16px;
 }
+body {
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 5px;
+}
+
+input {
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
