@@ -18,11 +18,6 @@ const authMiddleware = (req, res, next) => {
     // Log authenticated user for debugging
     console.log('Authenticated user:', req.user);
 
-    // Check if the user has the 'agent' role
-    if (req.user.role !== 'agent') {
-      return res.status(403).json({ message: 'Only agents can access this resource' });
-    }
-
     next();  // Proceed to the next middleware or controller
   } catch (error) {
     console.error('Token verification failed:', error); // Log any verification errors
@@ -30,4 +25,12 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-export default authMiddleware;
+// Middleware to enforce agent role for certain routes (like posting a job)
+const agentRoleMiddleware = (req, res, next) => {
+  if (req.user.role !== 'agent') {
+    return res.status(403).json({ message: 'Only agents can access this resource' });
+  }
+  next();  // Proceed to the next middleware or controller
+};
+
+export { authMiddleware, agentRoleMiddleware };
