@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Profile</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Create Your Profile</h2>
+    <form id="profile-form" enctype="multipart/form-data">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" name="fullName" required>
+
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone">
+
+      <label for="skills">Skills</label>
+      <input type="text" id="skills" name="skills" placeholder="e.g. JavaScript, Node.js, MongoDB" required>
+
+      <label for="experience">Experience</label>
+      <input type="text" id="experience" name="experience">
+
+      <label for="education">Education</label>
+      <input type="text" id="education" name="education">
+
+      <label for="resumeLink">Resume Link</label>
+      <input type="text" id="resumeLink" name="resumeLink">
+
+      <label for="profileImage">Profile Image</label>
+      <input type="file" id="profileImage" name="profileImage" accept="image/*">
+
+      <label for="resume">Resume Upload</label>
+      <input type="file" id="resume" name="resume" accept=".pdf, .doc, .docx">
+
+      <button type="submit">Save Profile</button>
+    </form>
+  </div>
+
+  <script src="./js/create-profile.js"></script>
+</body>
+</html>
