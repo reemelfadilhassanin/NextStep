@@ -1,7 +1,6 @@
 import express from 'express';
 import { createOrUpdateProfile, getProfile } from '../controllers/profileController.js';
-import { authMiddleware } from '../middlewares/authMiddleware.js';  // Correct for named export
-
+import authMiddleware from '../middlewares/authMiddleware.js';
 import upload from '../middlewares/upload.js';  // Multer upload middleware
 
 const router = express.Router();
