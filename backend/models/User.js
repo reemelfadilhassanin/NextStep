@@ -1,9 +1,8 @@
-// models/user.js
+// models/User.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Check if the model already exists in mongoose and reuse it if it does
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -16,7 +15,8 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    required: true,
+    enum: ['seeker', 'company'],  // Added 'company' role
+    required: true
   },
 });
 
@@ -46,7 +46,6 @@ userSchema.methods.generateAuthToken = function () {
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
-// Use `mongoose.models.User` to prevent overwriting
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 export default User;
