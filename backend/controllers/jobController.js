@@ -175,3 +175,43 @@ export const applyForJob = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+// controllers/jobController.js
+
+// Update job status
+export const updateJobStatus = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    const { status } = req.body; // new status ('open', 'closed', etc.)
+
+    // Validate status value
+    const validStatuses = ['open', 'closed', 'paused'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value.' });
+    }
+
+    // Find the job by ID
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found.' });
+    }
+
+    // Ensure the job belongs to the authenticated user (agent)
+    if (job.postedBy.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'You are not authorized to update this job.' });
+    }
+
+    // Update the job's status
+    job.status = status;
+    job.updatedAt = Date.now();
+
+    // Save the updated job
+    await job.save();
+
+    return res.status(200).json({ message: 'Job status updated successfully', job });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
