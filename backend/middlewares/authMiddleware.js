@@ -1,27 +1,28 @@
 import jwt from 'jsonwebtoken';
 
 const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization')?.split(' ')[1]; // Get token from Authorization header
+  // Get the token from Authorization header
+  const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
-    return res.status(403).json({ message: 'No token, authorization denied' }); // No token provided
+    return res.status(401).json({ message: 'Access denied. No token provided.' });
   }
 
   try {
-    // Verify the token using the secret from environment variables
+    // Decode the token and attach the user to the request object
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Add the decoded user info to the request object
-    next(); // Proceed to the next middleware/route handler
-  } catch (err) {
-    res.status(401).json({ message: 'Token is not valid' }); // Token invalid
+    console.log('Decoded token:', decoded);  // Log decoded token for debugging
+
+    req.user = decoded.user;  // Attach user info to the request object
+
+    // Log authenticated user for debugging
+    console.log('Authenticated user:', req.user);
+
+    next();  // Proceed to the next middleware or controller
+  } catch (error) {
+    console.error('Token verification failed:', error); // Log any verification errors
+    return res.status(400).json({ message: 'Invalid token.' });
   }
 };
 
-const roleMiddleware = (role) => (req, res, next) => {
-  if (req.user.role !== role) {
-    return res.status(403).json({ message: 'Forbidden, insufficient role' }); // Forbidden if role doesn't match
-  }
-  next(); // Proceed if role matches
-};
-
-export { authMiddleware, roleMiddleware }; // Exporting both middleware functions
+export default authMiddleware;
