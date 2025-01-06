@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Profile</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Agent Profile</h2>
+    <div id="profileInfo">
+      <!-- Profile information will be inserted here -->
+    </div>
+    <button id="logoutButton">Logout</button>
+  </div>
+
+  <script>
+    // Check if the token exists before trying to load the profile
+    const token = localStorage.getItem("authToken");
+    const role = localStorage.getItem("role");
+
+    // Redirect to login page if no token is found or if the role is incorrect
+    if (!token || role !== 'agent') {
+      window.location.href = "/login.html";  // Redirect to login if no token or wrong role
+    }
+
+    // Fetch user profile information for Agent
+    const fetchAgentProfile = async () => {
+      const response = await fetch("http://localhost:5000/api/profile/agent", {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      const profileDiv = document.getElementById("profileInfo");
+
+      if (response.ok) {
+        profileDiv.innerHTML = `
+          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+        `;
+      } else {
+        profileDiv.innerHTML = `<span style="color: red;">${data.message}</span>`;
+      }
+    };
+
+    // Call the function to load the profile
+    fetchAgentProfile();
+
+    // Logout functionality
+    document.getElementById("logoutButton").addEventListener("click", () => {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("role");
+      window.location.href = "/login.html";  // Redirect to login page after logout
+    });
+  </script>
+</body>
+</html>
