@@ -12,5 +12,8 @@
   "description": "",
   "devDependencies": {
     "parcel": "^2.13.2"
+  },
+  "dependencies": {
+    "jwt-decode": "^4.0.0"
   }
 }
