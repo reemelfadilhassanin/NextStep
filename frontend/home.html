@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - My App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Home Page</h1>
+    <p>Welcome, you are logged in!</p>
+    <button id="logoutButton">Logout</button>
+  </div>
+
+  <script>
+    // Check if the user is logged in by verifying the token
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      window.location.href = 'login.html';  // Redirect to login page if no token found
+    }
+
+    document.getElementById('logoutButton').addEventListener('click', () => {
+      localStorage.removeItem('authToken');
+      window.location.href = 'login.html';  // Redirect to login page after logout
+    });
+  </script>
+</body>
+</html>
