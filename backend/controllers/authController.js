@@ -1,5 +1,5 @@
+// controllers/authController.js
 import User from '../models/user.js';
-import jwt from 'jsonwebtoken';
 
 // Register a new user
 export const registerUser = async (req, res) => {
@@ -18,11 +18,14 @@ export const registerUser = async (req, res) => {
     // Save the user to the database
     await user.save();
 
-    // Generate auth token
+    // Generate auth token with 7 days expiration
     const token = user.generateAuthToken();
 
-    // Respond with the token
-    res.status(201).json({ token });
+    // Respond with the token and role
+    res.status(201).json({
+      token,
+      role: user.role // Include the role in the response
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -46,11 +49,14 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Generate auth token
+    // Generate auth token with 7 days expiration
     const token = user.generateAuthToken();
 
-    // Respond with the token
-    res.status(200).json({ token });
+    // Respond with the token and role
+    res.status(200).json({
+      token,
+      role: user.role // Include the role in the response
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
