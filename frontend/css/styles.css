@@ -5,6 +5,47 @@ body {
   margin: 0;
   padding: 0;
 }
+/* CSS for logo sizes */
+/* Apply fade-in animation when the section comes into view */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Make sure the logo images stay consistent in size */
+.logo {
+  width: 120px; /* Adjust width */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: contain; /* Ensures logos fit within their container */
+}
+
+/* Adjust logo sizes for smaller screens if necessary */
+@media (max-width: 768px) {
+  .logo {
+    width: 100px;
+  }
+}
+
+@media (max-width: 576px) {
+  .logo {
+    width: 80px;
+  }
+}
+
+
+
 
 /* Header Styles */
 header {
@@ -110,41 +151,54 @@ p {
 
 /* Button Styling */
 button {
+  display: inline-block;
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
-  padding: 10px 20px;  /* Smaller padding */
-  font-size: 0.9rem;  /* Reduced font size */
+  padding: 8px 16px;  /* Smaller padding to reduce size */
+  font-size: 0.85rem;  /* Further reduced font size */
   transition: all 0.3s ease;
   text-align: center;
   border-radius: 10px; /* Rounded corners */
-  margin: 0px 0; /* Adds vertical spacing between buttons */
+  margin: 0px 0; /* Remove vertical spacing between buttons */
 }
-.col-md-4 {
+
+/* Column Styling */
+.col-md-6 {
   padding: 0; /* Remove padding from columns */
   margin: 0;  /* Remove margin */
+  
 }
+
+/* Row Styling */
 .row {
-  gap: 0px; /* Adjust this value to control space between the two columns */
+  display: flex; /* Flexbox for horizontal alignment */
+  justify-content: center; /* Center the buttons horizontally */
+  align-items: center; /* Center the buttons vertically */
+  gap: 0px; /* Remove space between columns */
 }
 
+/* Hover Effect */
 button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05); /* Slight zoom on hover */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
 }
 
-/* Adding background color and spacing to the buttons */
+/* Active Button Effect */
+button:active {
+  transform: scale(1.02); /* Slight shrink on click */
+}
+
+/* Button Colors */
 .btn-primary {
-  background: linear-gradient(90deg, #007bff, #00bcd4); /* Gradient like header */
+  background: linear-gradient(90deg, #007bff, #00bcd4); /* Gradient background */
   color: white;
+  border: none; /* Remove border */
 }
 
 .btn-info {
-  background: linear-gradient(90deg, #007bff, #00bcd4); /* Gradient like header */
+  background: linear-gradient(90deg, #007bff, #00bcd4); /* Gradient background */
   color: white;
-}
-
-button:active {
-  transform: scale(1.02); /* Slight shrink on click */
+  border: none; /* Remove border */
 }
 
 /* Image Section Styling */
