@@ -5,6 +5,7 @@ import { authMiddleware, agentRoleMiddleware } from '../middlewares/authMiddlewa
 
 const router = express.Router();
 // Route to delete an application by ID
+// Route to delete an application by ID
 router.delete('/:applicationId', authMiddleware, agentRoleMiddleware, async (req, res) => {
   try {
     const { applicationId } = req.params;

@@ -4,15 +4,15 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
-import { getJobDetails } from './controllers/jobController.js';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';  // For security headers
+import chalk from 'chalk';  // For colored logging
 import upload from './middlewares/upload.js';  // Import multer upload config
 import authRoutes from './routes/auth.js';
 import profileRoutes from './routes/profile.js';
 import jobRoutes from './routes/jobRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
-import chalk from 'chalk';  // Import chalk for colored logging
+import { getJobDetails } from './controllers/jobController.js';
 
 // Load the appropriate .env file based on NODE_ENV
 if (process.env.NODE_ENV === 'test') {
@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.use(helmet());  // Add security headers
 
 // Ensure the 'uploads' directory exists
-const uploadDir = 'uploads';
+const uploadDir = path.resolve('uploads');  // Correct path handling using path.resolve
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
   console.log(chalk.green('Uploads directory created'));
@@ -44,6 +44,9 @@ mongoose.connect(process.env.MONGO_URI)
 // Serve static files (e.g., images, CSS, JS) from the frontend folder
 const frontendPath = path.resolve('C:/Users/misre/OneDrive/سطح المكتب/traiing/frontend');
 app.use(express.static(frontendPath));
+
+// Serve uploaded files (profile images, resumes, etc.) from the 'uploads' folder
+app.use('/uploads', express.static(uploadDir));  // Serve files from the correct uploads path
 
 // Routes setup
 app.use('/api/auth', authRoutes);
