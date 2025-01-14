@@ -1,171 +1,577 @@
-/* General body styles */
+/* General Styles */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
+  font-family: 'Poppins', sans-serif, 'Open Sans';
+  background-color: rgb(236,237,242);
   margin: 0;
   padding: 0;
 }
 
-/* Container for both login and dashboard pages */
-.container {
-  width: 100%;
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
+/* Header Styles */
+header {
+  background: linear-gradient(90deg, #007bff, #00bcd4); /* Gradient background for the header */
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+  font-family: 'Montserrat', sans-serif; /* Applying the Montserrat font for the header */
 }
 
-/* Heading styles for login page */
-h2 {
-  font-size: 24px;
+/* Logo Styling */
+/* Header Styles */
+header {
+  background: linear-gradient(90deg, #007bff, #00bcd4); /* Gradient background for the header */
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;  /* Ensures the logo and button align vertically */
+  transition: all 0.3s ease-in-out;
+  font-family: 'Montserrat', sans-serif; /* Applying the Montserrat font for the header */
+}
+
+/* Logo Styling */
+header .logo h2 {
+  font-family: 'Lora', serif; /* Elegant font for the logo */
+  font-weight: 700;
+  font-size: 2.2rem; /* Reduced size */
+  letter-spacing: 1.5px;
+  transition: transform 0.3s ease-in-out;
+  color: #ffffff;
+  margin-bottom: 0; /* Remove any extra margin from the bottom */
+  padding-top: 0; /* Remove padding at the top to center the logo */
+}
+
+header .logo h2:hover {
+  transform: scale(1.1); /* Logo scale effect */
+  color: #ffffff; /* Slight color change when hovered */
+}
+
+/* Button (Login) Styles */
+header .btn {
+  font-family: 'Montserrat', sans-serif; /* Using Montserrat for buttons */
+  font-weight: 600;
+  font-size: 1rem; /* Reduced size */
+  padding: 8px 18px;
+  border: none;
+  background-color: #ffffff;
+  color: #ffffff;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  border-radius: 50px;
+  margin-top: 0; /* Align the button to the center vertically */
+}
+
+/* Button Hover Effects */
+header .btn:hover {
+  background-color: #00bcd4;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 188, 212, 0.3);
+  transform: translateY(-2px); /* Button lift effect */
+}
+header .logo a {
+  text-decoration: none; /* Removes underline from the logo link */
+}
+
+
+/* Main Section Styles */
+.container {
+  padding: 3rem 0;
+  max-width: 1000px;
+  margin: 0 auto;  /* Centers the container */
+}
+
+h1 {
+  font-family: 'Montserrat', sans-serif;  /* Using Montserrat font */
+  font-weight: 700;
+  font-size: 2rem; /* Reduced size */
   color: #333;
+  text-align: center; /* Ensures the title is centered */
+  margin-bottom: 1.5rem; /* Adds spacing below the title */
+}
+
+p {
+  font-family: 'Lora', serif;  /* Elegant serif font */
+  color: #555;
+  font-size: 1.1rem; /* Slightly larger text for readability */
+  margin-top: 1rem;
+  text-align: center;  /* Centers the paragraph */
+  line-height: 1.7;
+}
+
+/* Button Styling */
+button {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  padding: 10px 20px;  /* Smaller padding */
+  font-size: 0.9rem;  /* Reduced font size */
+  transition: all 0.3s ease;
+  text-align: center;
+  border-radius: 10px; /* Rounded corners */
+  margin: 0px 0; /* Adds vertical spacing between buttons */
+}
+.col-md-4 {
+  padding: 0; /* Remove padding from columns */
+  margin: 0;  /* Remove margin */
+}
+.row {
+  gap: 0px; /* Adjust this value to control space between the two columns */
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Adding background color and spacing to the buttons */
+.btn-primary {
+  background: linear-gradient(90deg, #007bff, #00bcd4); /* Gradient like header */
+  color: white;
+}
+
+.btn-info {
+  background: linear-gradient(90deg, #007bff, #00bcd4); /* Gradient like header */
+  color: white;
+}
+
+button:active {
+  transform: scale(1.02); /* Slight shrink on click */
+}
+
+/* Image Section Styling */
+.image-section {
+  background-color: #f1f1f1;
+  padding: 0;  /* Remove padding */
+  margin: 0;  /* Remove margin */
+  height: 100vh;  /* Full height of the viewport */
+  width: 100%;  /* Full width of the viewport */
+  position: relative;  /* Allows the image to fill the section */
+}
+
+.image-section .row,
+.image-section .col-12,
+.image-section .col-md-8 {
+  padding: 0;  /* Remove padding from row and columns */
+  margin: 0;  /* Remove margin from row and columns */
+  height: 100%;  /* Ensure row and columns fill the section */
+}
+
+.image-section img {
+  position: absolute;  /* Position the image absolutely within the section */
+  top: 0;  /* Align image to the top */
+  left: 0;  /* Align image to the left */
+  width: 100%;  /* Stretch the image to 100% of the section width */
+  height: 100%;  /* Stretch the image to 100% of the section height */
+  object-fit: cover;  /* Ensure the image covers the section without distortion */
+  border-radius: 0;  /* Remove any border-radius */
+  box-shadow: none;  /* Remove any shadow */
+}
+.site-section .logo {
+  max-width: 130px;  /* Limit the width of the logos */
+  height: auto;  /* Maintain aspect ratio */
+  margin: 20px 0;  /* Add spacing between logos */
+}
+
+/* Footer Styles */
+footer {
+  background-color: #343a40;
+  padding: 4rem 0;
+  color: white;
+}
+
+footer p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem; /* Reduced size */
+  color: #dcdcdc;
+}
+
+/* Footer Link Styles */
+footer a {
+  color: #dcdcdc;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #ff6f61;  /* Accent color on hover */
+}
+
+/* Custom Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Animation for Footer Text */
+footer .container p {
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+  animation-delay: 1.5s;
+}
+
+footer .container h6, footer .container h1 {
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+  animation-delay: 1s;
+}
+
+/* Animation for Individual Logo and Social Icons */
+footer .btn-floating {
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+  animation-delay: 2s;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  footer .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  footer .col-md-3,
+  footer .col-md-2,
+  footer .col-md-4 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  footer .logo h2 {
+    font-size: 1.8rem; /* Smaller size for responsiveness */
+  }
+
+  footer .container h1 {
+    font-size: 2rem; /* Smaller size for smaller screens */
+  }
+
+  footer .container p {
+    font-size: 0.95rem; /* Slightly smaller font size for smaller screens */
+  }
+
+  footer .container h2 {
+    font-size: 1.8rem; /* Smaller size for h2 */
+  }
+
+  footer .container h4 {
+    font-size: 1.4rem; /* Smaller size for h4 */
+  }
+
+  footer .social-icons a {
+    font-size: 1.2rem;
+    margin: 0 10px;
+  }
+}
+
+/* Footer Bottom Section */
+footer .text-center.p-3 {
+  position: fixed; /* Fix it to the bottom of the page */
+  bottom: 0; /* Position it at the bottom */
+  width: 100%; /* Full width */
+  background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent dark background */
+  color: #fff; /* White text color */
+  padding: 15px 0; /* Add vertical padding */
+  text-align: center; /* Center the content */
+  font-size: 0.9rem; /* Set a smaller font size */
+  z-index: 1000; /* Make sure it's above other content */
+}
+
+footer .text-center.p-3 a {
+  color: #ff6f61; 
+  text-decoration: none; 
+  transition: color 0.3s ease; 
+}
+
+footer .text-center.p-3 a:hover {
+  color: #ff9e85; 
+}
+
+/* Footer Section Custom Styling */
+footer .section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+footer .lead {
+  font-family: 'Lora', serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #dcdcdc;
+}
+
+/* Social Media Button Styles */
+footer .social-buttons a {
+  transition: transform 0.3s ease;
+}
+
+footer .social-buttons a:hover {
+  transform: scale(1.1);  /* Slight scale effect on hover */
+}
+
+/* Custom styling for footer link hover effects */
+footer .social-buttons .btn-floating:hover {
+  background-color: #ff6f61; /* Accent color on hover */
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  header .logo h2 {
+    font-size: 1.8rem; /* Smaller size for responsiveness */
+  }
+
+  .container h1 {
+    font-size: 2rem; /* Smaller size for smaller screens */
+  }
+
+  .container p {
+    font-size: 0.95rem; /* Slightly smaller font size for smaller screens */
+  }
+
+  .container h2 {
+    font-size: 1.8rem; /* Smaller size for h2 */
+  }
+
+  .container h4 {
+    font-size: 1.4rem; /* Smaller size for h4 */
+  }
+}
+
+/* Section for next Site Stats */
+#next {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 80px 0;
+}
+
+#next .section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 2.5rem;
   margin-bottom: 20px;
 }
 
-/* Form inputs */
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
+#next .lead {
+  font-family: 'Lora', serif;
+  font-size: 1.2rem;
+  line-height: 1.8;
 }
 
-/* Button styles */
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
+#next .block__19738 {
+  margin-top: 50px;
 }
 
-button:hover {
-  background-color: #45a049;
-}
-
-/* Links (such as "Sign Up" or "Edit Profile") */
-a {
-  color: #4CAF50;
-  text-decoration: none;
-  font-size: 16px;
-  margin-top: 10px;
-  display: inline-block;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* Message styles (for errors or success) */
-#registerMessage, #loginMessage, #resetMessage, #profileMessage {
-  margin-top: 10px;
-  font-size: 14px;
+#next .col-md-3 {
   text-align: center;
+  padding: 15px 0; /* Adjusted padding for better spacing */
 }
 
-#loginMessage {
-  color: red;
+#next .number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-#registerMessage {
-  color: green;
+#next .caption {
+  font-size: 1.1rem;
+  font-family: 'Lora', serif;
+  color: #ffffff;
+  margin-top: 20px; /* Increased space between number and caption */
+  margin-left: 40px;
 }
 
-/* Additional container adjustments */
-.container {
-  width: 90%;
-  max-width: 500px;
-  padding: 30px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+#next .overlay-primary {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive Design for the Stats Section */
+@media (max-width: 768px) {
+  #next .section-title {
+    font-size: 2rem; /* Smaller title size on smaller screens */
+  }
+
+  #next .lead {
+    font-size: 1rem; /* Smaller lead text size */
+  }
+
+  #next .number {
+    font-size: 2.5rem; /* Smaller number on small screens */
+  }
+
+  /* Adjust caption on smaller screens */
+  #next .caption {
+    font-size: 1rem; /* Smaller font size */
+    font-family: 'Lora', serif;
+    color: #ffffff;
+    margin-top: 15px; /* Reduced margin for smaller screens */
+    padding-left: 40px; /* Slightly increased padding for responsiveness */
+  }
+
+  /* Adjust column layout on small screens for better spacing */
+  #next .col-md-3 {
+    margin-bottom: 20px; /* Adding space between columns on smaller screens */
+  }
+}
+
+/* Custom CSS to ensure logos are of same size and spacing */
+.site-section .logo {
+  max-width: 150px;  /* Set a max width to maintain consistency */
+  margin-bottom: 30px; /* Space between logos */
+  transition: transform 0.3s ease;
+}
+
+.site-section .logo:hover {
+  transform: scale(1.1);  /* Slight zoom effect on hover */
+}
+
+/* Margin and spacing adjustments */
+.site-section .col-6 {
+  margin-bottom: 20px;  /* Space between logos on mobile screens */
+}
+
+.site-section .text-center {
+  text-align: center;  /* Ensure text is centered */
+}
+  /* section for net app*/
+
+
+  /*  add color oerly for backgroun */
+  /* Background with overlay and fixed positioning */
+.bg-image-overlay {
+  background-size: cover;
+  background-position: center center;
+  position: relative;
+  height: 100vh; /* Full viewport height */
+  color: white;
+}
+
+/* Overlay effect */
+.bg-image-overlay::before {
+  content: ''; /* Create a pseudo-element for the overlay */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent blue overlay */
+  z-index: 1; /* Ensure overlay is above the image */
+}
+
+/* Ensure the content stays above the overlay */
+.bg-image-overlay .container {
+  position: relative;
+  z-index: 2; /* Keep text above the overlay */
+}
+
+/* Title and description styling */
+h2.text-white {
+  color: #fff !important;
+  font-size: 3rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.lead.text-white {
+  color: #fff !important;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Adjust button styles */
+.btn-dark {
+  background-color: #333;
+  border-color: #333;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-dark:hover {
+  background-color: #555;
+  border-color: #555;
+}
+
+/* Ensure image responsiveness */
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+.shadow-lg {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.rounded {
   border-radius: 10px;
 }
+/* Styling for the buttons */
+section .btn {
+  display: inline-block;
+  margin-bottom: 10px; /* Add some space between the buttons */
+  transition: all 0.3s ease;
+  padding: 6px 12px; /* Reduced padding to make the buttons smaller */
+  font-size: 14px; /* Smaller font size */
+  border-radius: 3px; /* Slightly rounded corners for a more compact look */
+}
 
-/* Style for form elements */
-form {
+/* Center the button container */
+section p.mb-0 {
+  padding: 0;
+  margin: 0;
+  text-align: center; /* Center the content horizontally */
+}
+
+/* Flex container for the buttons */
+section .btn-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center; /* Center buttons horizontally */
+  gap: 10px; /* Add space between buttons */
 }
 
-form label {
-  font-weight: bold;
-  margin-bottom: 8px;
-  text-align: left;
+/* Adjusting buttons for different screen sizes */
+@media (max-width: 768px) {
+  section .btn-container {
+    flex-direction: column; /* Stack the buttons vertically on small screens */
+    align-items: center; /* Center the buttons on the vertical axis */
+  }
+  
+  section .btn {
+    width: auto; /* Allow buttons to have their natural width */
+    padding: 8px 16px; /* Slightly larger padding on mobile for ease of tap */
+    font-size: 14px; /* Keep the font size smaller on mobile */
+    margin-bottom: 10px; /* Add space between stacked buttons */
+  }
 }
 
-form input {
-  margin-bottom: 15px;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
+/* Responsive design for larger screens */
+@media (min-width: 768px) {
+  section .btn-container {
+    justify-content: center; /* Center the buttons horizontally on larger screens */
+  }
+  
+  section .btn {
+    width: auto; /* Ensure buttons use their natural width */
+  }
 }
 
-form button {
-  padding: 12px;
-  font-size: 18px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-form button:hover {
-  background-color: #0056b3;
-}
-
-/* Message style for login or registration result */
-#loginMessage, #registerMessage {
-  font-size: 14px;
-  margin-top: 15px;
-  text-align: center;
-}
-
-#loginMessage span, #registerMessage span {
-  font-size: 16px;
-}
-body {
-  font-family: Arial, sans-serif;
-}
-
-.container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-label {
-  margin-bottom: 5px;
-}
-
-input {
-  margin-bottom: 10px;
-  padding: 8px;
-}
-
-button {
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
-}
 
