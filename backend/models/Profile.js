@@ -2,22 +2,22 @@ import mongoose from 'mongoose';
 
 // Subschemas for experience and education
 const experienceSchema = new mongoose.Schema({
-  years: { type: Number, required: true },
-  role: { type: String, required: true },
-  company: { type: String, required: true },
+  years: { type: Number },
+  role: { type: String },
+  company: { type: String },
 }, { _id: false });
 
 const educationSchema = new mongoose.Schema({
-  degree: { type: String, required: true },
-  university: { type: String, required: true },
-  yearOfGraduation: { type: Number, required: true },
+  degree: { type: String },
+  university: { type: String },
+  yearOfGraduation: { type: Number },
 }, { _id: false });
 
 // Main Profile Schema
 const profileSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  fullName: { type: String, required: true },
-  phone: { type: String, required: true },
+  fullName: { type: String },
+  phone: { type: String },
   profileImage: { type: String },  // URL or path to the image
   resume: { type: String }, // Path to resume file
   experience: [experienceSchema],
