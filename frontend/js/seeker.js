@@ -215,3 +215,18 @@ function openApplyModal(jobId) {
         applyModal.style.display = 'none';
     };
 }
+window.addEventListener('DOMContentLoaded', function() {
+    // Retrieve the profile image URL from localStorage
+    const storedProfileImage = localStorage.getItem('profileImage');
+  
+    const profileImageNavElement = document.getElementById('profileImageNav'); // Reference to the profile image in the navbar
+  
+    if (storedProfileImage) {
+      // If a profile image is stored, use it
+      profileImageNavElement.src = storedProfileImage;
+    } else {
+      // If no image is stored, you can either keep a placeholder or default image
+      profileImageNavElement.src = 'frontend/assets/2.png'; // Default image for the nav
+    }
+  });
+  
