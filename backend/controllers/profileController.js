@@ -22,8 +22,8 @@ export const createProfile = async (req, res) => {
     const { fullName, phone, experience, education, bio, skills, socialLinks, address } = req.body;
 
     // Parse files uploaded (profileImage, resume)
-    let profileImage = req.files?.profileImage ? req.files.profileImage[0].path : null;
-    let resume = req.files?.resume ? req.files.resume[0].path : null;
+    let profileImage = req.files?.profileImage ? req.files.profileImage[0].path.replace(/\\/g, '/') : null;
+    let resume = req.files?.resume ? req.files.resume[0].path.replace(/\\/g, '/') : null;
 
     // Parse stringified arrays/objects to actual arrays and objects
     const parsedExperience = parseJSON(experience) || [];
@@ -57,6 +57,14 @@ export const createProfile = async (req, res) => {
     profile.user = req.user.id;  // Associate profile with authenticated user
     await profile.save();
     
+    // Ensure images and files are served correctly
+    if (profile.profileImage) {
+      profile.profileImage = `${process.env.SERVER_URL}/uploads/${profile.profileImage}`;
+    }
+    if (profile.resume) {
+      profile.resume = `${process.env.SERVER_URL}/uploads/${profile.resume}`;
+    }
+
     return res.status(201).json({ message: 'Profile created successfully', profile });
 
   } catch (error) {
@@ -103,8 +111,8 @@ export const updateProfile = async (req, res) => {
     const { fullName, phone, experience, education, bio, skills, socialLinks, address } = req.body;
 
     // Parse files uploaded (profileImage, resume)
-    let profileImage = req.files?.profileImage ? req.files.profileImage[0].path : null;
-    let resume = req.files?.resume ? req.files.resume[0].path : null;
+    let profileImage = req.files?.profileImage ? req.files.profileImage[0].path.replace(/\\/g, '/') : null;
+    let resume = req.files?.resume ? req.files.resume[0].path.replace(/\\/g, '/') : null;
 
     // Parse stringified arrays/objects to actual arrays and objects
     const parsedExperience = parseJSON(experience) || [];
@@ -128,6 +136,14 @@ export const updateProfile = async (req, res) => {
 
     // Save the updated profile
     await profile.save();
+
+    // Ensure images and files are served correctly
+    if (profile.profileImage) {
+      profile.profileImage = `${process.env.SERVER_URL}/uploads/${profile.profileImage}`;
+    }
+    if (profile.resume) {
+      profile.resume = `${process.env.SERVER_URL}/uploads/${profile.resume}`;
+    }
 
     return res.status(200).json({ message: 'Profile updated successfully', profile });
 
@@ -155,5 +171,29 @@ export const deleteProfile = async (req, res) => {
 };
 
 // Update Profile Skills
+export const updateProfileSkills = async (req, res) => {
+  try {
+    // Find the profile for the authenticated user
+    const profile = await Profile.findOne({ user: req.user.id });
 
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
 
+    // Parse the incoming skills
+    const { skills } = req.body;
+    const parsedSkills = parseJSON(skills) || [];
+
+    // Update the skills array
+    profile.skills = parsedSkills.length > 0 ? parsedSkills : profile.skills;
+
+    // Save the updated profile
+    await profile.save();
+
+    return res.status(200).json({ message: 'Profile skills updated successfully', profile });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
