@@ -13,6 +13,7 @@ import profileRoutes from './routes/profile.js';
 import jobRoutes from './routes/jobRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
 import { getJobDetails } from './controllers/jobController.js';
+import connectDB from './config/db.js';  // Import the connectDB function
 
 // Load the appropriate .env file based on NODE_ENV
 if (process.env.NODE_ENV === 'test') {
@@ -37,12 +38,10 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log(chalk.green('MongoDB connected successfully')))
-  .catch((err) => console.log(chalk.red('MongoDB connection error:', err)));
+connectDB();  // Call the connectDB function
 
 // Serve static files (e.g., images, CSS, JS) from the frontend folder
-const frontendPath = path.resolve('C:/Users/misre/OneDrive/سطح المكتب/traiing/frontend');
+const frontendPath = path.resolve('frontend');
 app.use(express.static(frontendPath));
 
 // Serve uploaded files (profile images, resumes, etc.) from the 'uploads' folder
