@@ -5,7 +5,6 @@ import { authMiddleware, agentRoleMiddleware } from '../middlewares/authMiddlewa
 
 const router = express.Router();
 // Route to delete an application by ID
-// Route to delete an application by ID
 router.delete('/:applicationId', authMiddleware, agentRoleMiddleware, async (req, res) => {
   try {
     const { applicationId } = req.params;
@@ -108,9 +107,6 @@ router.get('/:jobId', authMiddleware, agentRoleMiddleware, async (req, res) => {
 // Route to get application details (one specific application)
 router.get('/:applicationId', authMiddleware, agentRoleMiddleware, getApplicationDetails);
 
-// Route to update application status (Authenticated agent only)
-//router.put('/:applicationId/status', authMiddleware, agentRoleMiddleware, updateApplicationStatus);
-
 router.put('/user/:userId/status', authMiddleware, agentRoleMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;  // Get userId from URL
@@ -143,7 +139,43 @@ router.put('/user/:userId/status', authMiddleware, agentRoleMiddleware, async (r
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
-// Route to get applications for a specific job
+// Route to update application status (Authenticated agent only)
+//router.put('/:applicationId/status', authMiddleware, agentRoleMiddleware, updateApplicationStatus);
+router.put('/user/:userId/status/:jobId', authMiddleware, agentRoleMiddleware, async (req, res) => {
+  try {
+    const { userId, jobId } = req.params;  // Get userId and jobId from URL
+    const { status } = req.body;           // Get status from body
+
+    // Validate the status
+    if (!status) {
+      return res.status(400).json({ message: 'Status is required' });
+    }
+
+    // Find the specific application for the given user and job, populate the profile field and its nested fields
+    const application = await Application.findOne({ user: userId, job: jobId })
+      .populate('profile', 'experience education skills')  // Populate profile fields like experience, education, skills
+      .populate('job', 'title description');  // Optional: You can populate job details if needed
+
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found for this user and job' });
+    }
+
+    // Update the status of the specific application
+    application.status = status;
+    application.updatedAt = Date.now();  // Update the timestamp of the application
+
+    await application.save();
+
+    return res.status(200).json({
+      message: 'Application status updated successfully',
+      updatedApplication: application,
+    });
+  } catch (error) {
+    console.error('Error updating application status:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 router.get('/:jobId', authMiddleware, agentRoleMiddleware, async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -169,6 +201,51 @@ router.get('/:jobId', authMiddleware, agentRoleMiddleware, async (req, res) => {
     return res.status(200).json({ applications });
   } catch (error) {
     console.error('Error fetching applications:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+// Route to create a new application using fill from profile user
+router.post('/', authMiddleware, async (req, res) => {
+  try {
+    const { job, resume } = req.body;
+
+    // Ensure job and resume are provided
+    if (!job || !resume) {
+      return res.status(400).json({ message: 'Job and Resume are required.' });
+    }
+
+    // Fetch the user's profile (if it exists)
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found. Please create a profile first.' });
+    }
+
+    // Use the profile data (experience, education, skills, social links, etc.)
+    const { experience, education, skills, socialLinks } = profile;
+
+    // Create a new application
+    const newApplication = new Application({
+      job,
+      user: req.user.id,
+      profile: profile._id, // Reference to the profile
+      resume, // Use the provided resume
+      experience, // Include the profile's experience data
+      education, // Include the profile's education data
+      skills, // Include the profile's skills
+      socialLinks, // Include the profile's social links
+      status: 'applied', // Default status
+    });
+
+    // Save the application
+    const application = await newApplication.save();
+
+    return res.status(201).json({
+      message: 'Application submitted successfully',
+      application,
+    });
+  } catch (error) {
+    console.error('Error creating application:', error);
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

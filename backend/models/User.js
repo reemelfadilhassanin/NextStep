@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['seeker', 'company'],  // Added 'company' role
+    enum: ['seeker', 'agent'],  // Added 'company' role
     required: true
   },
 });
@@ -43,7 +43,8 @@ userSchema.methods.generateAuthToken = function () {
     }
   };
 
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+  // Generate JWT token with 7 days expiration
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);

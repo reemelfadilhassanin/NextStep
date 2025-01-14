@@ -422,5 +422,43 @@ export const getJobsAppliedByUser = async (req, res) => {
   }
 };
 
+// In jobController.js
+export const getApplicationsForJob = async (req, res) => {
+  try {
+    const jobId = req.params.jobId;
+
+    // Find the job by its ID to make sure it exists
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found.' });
+    }
+
+    // Fetch all applications for the job and populate applicant details
+    const applications = await Application.find({ job: jobId })
+      .populate('user', 'name email')  // Populate user details (e.g., name and email)
+      .populate('profile', 'experience education skills socialLinks');  // Populate profile information
+
+    if (applications.length === 0) {
+      return res.status(404).json({ message: 'No applications found for this job.' });
+    }
+
+    // Clean up redundant fields in each application document
+    const cleanedApplications = applications.map(application => {
+      // Destructure to exclude redundant fields from the application object
+      const { experience, education, skills, ...cleanedApplication } = application.toObject();
+      return cleanedApplication;
+    });
+
+    return res.status(200).json({
+      message: 'Applications fetched successfully',
+      applications: cleanedApplications,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
 
 
