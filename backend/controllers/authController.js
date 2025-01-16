@@ -1,64 +1,43 @@
-// controllers/authController.js
-import User from '../models/user.js';
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-// Register a new user
-export const registerUser = async (req, res) => {
-  const { email, password, role } = req.body;
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    required: true,
+    enum: ['user', 'admin'],
+  },
+});
 
-  try {
-    // Check if the user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
-    // Create a new user
-    const user = new User({ email, password, role });
-
-    // Save the user to the database
-    await user.save();
-
-    // Generate auth token with 7 days expiration
-    const token = user.generateAuthToken();
-
-    // Respond with the token and role
-    res.status(201).json({
-      token,
-      role: user.role // Include the role in the response
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Login an existing user
-export const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Find the user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    // Compare passwords
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    // Generate auth token with 7 days expiration
-    const token = user.generateAuthToken();
-
-    // Respond with the token and role
-    res.status(200).json({
-      token,
-      role: user.role // Include the role in the response
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
+userSchema.methods.generateAuthToken = function () {
+  return jwt.sign(
+    { userId: this._id, role: this.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
 };
+
+const User = mongoose.model('User', userSchema);
+export default User; // Ensure default export
