@@ -1,7 +1,7 @@
-import User from '../models/user.js';
+const User = require('../models/user');
 
 // Register a new user
-export const registerUser = async (req, res) => {
+ const registerUser = async (req, res) => {
   const { email, password, role } = req.body;
 
   try {
@@ -30,7 +30,7 @@ export const registerUser = async (req, res) => {
 };
 
 // Login an existing user
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -59,3 +59,5 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 };
+
+module.exports = { registerUser, loginUser };

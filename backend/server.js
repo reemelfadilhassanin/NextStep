@@ -8,7 +8,7 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';  // For security headers
 import chalk from 'chalk';  // For colored logging
 import upload from './middlewares/upload.js';  // Import multer upload config
-import authRoutes from './routes/auth.js';
+import authRoutes from './routes/authRoutes.js';
 import profileRoutes from './routes/profile.js';
 import jobRoutes from './routes/jobRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
