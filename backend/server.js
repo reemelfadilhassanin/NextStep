@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import authRoutes from './routes/auth.js';
+import { router as authRoutes } from './routes/auth.js';
 import profileRoutes from './routes/profile.js';  // Profile routes
 import fs from 'fs';  // For checking or creating the uploads directory
 import jobRoutes from './routes/jobRoutes.js';  // Job routes
