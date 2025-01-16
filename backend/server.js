@@ -2,12 +2,11 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import { router as authRoutes } from './routes/auth.js';
+import * as auth from './routes/auth.cjs';
 import profileRoutes from './routes/profile.js';  // Profile routes
 import fs from 'fs';  // For checking or creating the uploads directory
 import jobRoutes from './routes/jobRoutes.js';  // Job routes
 import { updateApplicationStatus } from './controllers/applicationController.js'; // Adjust path as needed
-
 
 dotenv.config();
 const app = express();
@@ -29,11 +28,10 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => console.log('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/auth', authRoutes);  // Auth routes
+app.use('/api/auth', auth.router);  // Auth routes
 app.use('/api/profile', profileRoutes);  // Profile routes
 app.use('/api/jobs', jobRoutes);  // Job routes
 app.put('/api/applications/:applicationId/status', updateApplicationStatus);
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
