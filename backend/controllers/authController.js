@@ -1,4 +1,5 @@
-import User from '../models/user';
+import User from '../models/user.model.js';
+
 // Register a new user
  const registerUser = async (req, res) => {
   const { email, password, role } = req.body;
@@ -59,4 +60,4 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+export { registerUser, loginUser };
