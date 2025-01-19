@@ -8,7 +8,11 @@
   <!-- Owl Carousel CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+<!-- Include Font Awesome from CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+<!-- Include Font Awesome from CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <!-- Google Fonts for beautiful fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -90,57 +94,83 @@
   </div>
 </section>
 
-  
-<div class="container text-center py-5">
-  <h1 class="display-4 animate__animated animate__fadeIn ">Explore thousands of job</h1>
-   
-  <div class="row justify-content-center mt-5">
-    <!-- Use col-md-5 instead of col-md-4 to reduce space -->
-    <div class="col-md-5 mb-2"> <!-- Reduced bottom margin -->
-      <button class="btn btn-primary btn-lg w-100 animate__animated animate__fadeIn animate__delay-2s" id="findJobBtn">Find a Job</button>
-    </div>
-  
-    <div class="col-md-5 mb-2"> <!-- Reduced bottom margin -->
-      <button class="btn btn-info btn-lg w-100 animate__animated animate__fadeIn animate__delay-2s" id="postJobBtn">Post a Job</button>
+<section class="pt-5 bg-image overlay-primary fixed overlay" style="background-color: #3498db;">
+  <div class="container">
+    <div class="row align-items-center"> <!-- Align items vertically centered -->
+      
+      <!-- Left side for text and buttons -->
+      <div class="col-md-6 order-md-1 text-center text-md-left mb-5 mb-md-0">
+        <!-- Heading Text -->
+        <h2 class="text-white mb-4 custom-heading">
+          Start your journey <i class="fas fa-heart text-danger"></i>
+        </h2>
+        
+        
+        <!-- Description Text -->
+        <p class="mb-5 lead text-white custom-text">Unlock endless opportunities—whether you're hiring or seeking your next career move, we’re here to help!</p>
+        
+        <p class="mb-0">
+          <!-- Buttons -->
+          <a href="#" class="btn btn-dark btn-md px-4 border-width-2 custom-btn" id="findJobBtn"><span class="icon-apple mr-3"></span>Find a Job</a>
+          <a href="#" class="btn btn-dark btn-md px-4 border-width-2 custom-btn" id="postJobBtn"><span class="icon-android mr-3"></span>Post a Job</a>
+        </p>
+      </div>
+      
+      <!-- Right side for image -->
+      <div class="col-md-6 order-md-2 text-center custom-img-container">
+        <img src="assets/istockphoto-1081381238-612x612-removebg-preview.png" alt="Mobile App Image" class="img-fluid custom-img">
+      </div>
+      
     </div>
   </div>
-</div>
+</section>
 
-  <section class="bg-light pt-5 testimony-full">
-    <div class="owl-carousel single-carousel">
-      
-      <!-- Testimonial 1 -->
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6 align-self-center text-center text-lg-left">
-            <blockquote>
-              <p>&ldquo;NextStep helped me find my dream job quickly and easily! The platform is user-friendly and offers a great selection of job listings. I highly recommend it for anyone looking to take the next step in their career.&rdquo;</p>
-              <p><cite> &mdash; Sarah Johnson, Software Developer</cite></p>
-            </blockquote>
-          </div>
-          <div class="col-lg-6 align-self-end text-center text-lg-right">
-            <img src="assets/person_transparent_2.png" alt="Sarah Johnson" class="img-fluid mb-0">
-          </div>
-        </div>
-      </div>
-  
-      <!-- Testimonial 2 -->
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6 align-self-center text-center text-lg-left">
-            <blockquote>
-              <p>&ldquo;As an employer, posting a job on NextStep was incredibly straightforward. I received qualified candidates almost immediately. This platform made the hiring process so much easier and faster!&rdquo;</p>
-              <p><cite> &mdash; James Miller, HR Manager at TechCorp</cite></p>
-            </blockquote>
-          </div>
-          <div class="col-lg-6 align-self-end text-center text-lg-right">
-            <img src="assets/person_transparent.png" alt="James Miller" class="img-fluid mb-0">
-          </div>
-        </div>
-      </div>
-  
+
+
     </div>
-  </section>
+  </div>
+</section>
+
+
+<section class="bg-light pt-5 testimony-full">
+  <div class="owl-carousel single-carousel">
+    <!-- Testimonial 1 -->
+    <div class="container testimonial-item">
+      <div class="row">
+        <div class="col-lg-6 align-self-center text-center text-lg-left">
+          <blockquote>
+            <p class="comment-box">
+              “NextStep helped me find my dream job quickly and easily! The platform is user-friendly and offers a great selection of job listings. I highly recommend it for anyone looking to take the next step in their career.”
+            </p>
+            <p><cite> — Sarah Johnson, Software Developer</cite></p>
+          </blockquote>
+        </div>
+        <div class="col-lg-6 align-self-end text-center text-lg-right">
+          <img src="assets/person_transparent_2.png" alt="Sarah Johnson" class="img-fluid mb-0">
+        </div>
+      </div>
+    </div>
+
+    <!-- Testimonial 2 -->
+    <div class="container testimonial-item">
+      <div class="row">
+        <div class="col-lg-6 align-self-center text-center text-lg-left">
+          <blockquote>
+            <p class="comment-box">
+              &ldquo;As an employer, posting a job on NextStep was incredibly straightforward. I received qualified candidates almost immediately. This platform made the hiring process so much easier and faster!&rdquo;
+            </p>
+            <p><cite> — James Miller, HR Manager at TechCorp</cite></p>
+          </blockquote>
+        </div>
+        <div class="col-lg-6 align-self-end text-center text-lg-right">
+          <img src="assets/person_transparent.png" alt="James Miller" class="img-fluid mb-0">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 
   <section class="site-section py-4"  >
     <div class="container">

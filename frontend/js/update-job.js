@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const token = localStorage.getItem('token');
-    const tokenExpiry = localStorage.getItem('token_expiry');  // Get token expiry time from localStorage
+    const tokenExpiry = localStorage.getItem('token_expiry');
     const jobId = new URLSearchParams(window.location.search).get('id');
     let quill;
 
@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!token || !tokenExpiry || Date.now() > tokenExpiry) {
         alert('Your session has expired. Please log in again.');
         localStorage.removeItem('token');
-        localStorage.removeItem('token_expiry');  // Remove expired token
-        window.location.href = '/login';  // Redirect to login
+        localStorage.removeItem('token_expiry'); 
+        window.location.href = '/login'; 
         return;
     }
 
@@ -33,13 +33,19 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('jobType').value = data.type;
         document.getElementById('jobRemote').checked = data.remote;
         document.getElementById('skills').value = data.skillsRequired.join(', ');
-        document.getElementById('jobStatus').value = data.status;  // Set the initial job status
+        document.getElementById('jobStatus').value = data.status;
 
         // If the job has a logo, display it
         if (data.companyLogo) {
             const logoPreview = document.getElementById('logoPreview');
             logoPreview.src = 'data:image/png;base64,' + data.companyLogo;
             logoPreview.style.display = 'block';
+
+            // Save the company logo to localStorage
+            localStorage.setItem('companyLogo', data.companyLogo);
+
+            // Update the navbar logo with the company logo
+            
         }
 
         // Initialize Quill editor with the job description
@@ -77,6 +83,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const logoPreview = document.getElementById('logoPreview');
             logoPreview.src = event.target.result;
             logoPreview.style.display = 'block';
+
+            // Save the new logo to localStorage
+            localStorage.setItem('companyLogo', event.target.result.split(',')[1]);
         };
 
         if (file) {
@@ -95,20 +104,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const updatedJob = {
             title: document.getElementById('jobTitle').value,
-            description: quill.root.innerHTML,  // Get description from Quill
+            description: quill.root.innerHTML, 
             location: document.getElementById('jobLocation').value,
             salary: document.getElementById('jobSalary').value,
             type: document.getElementById('jobType').value,
             remote: document.getElementById('jobRemote').checked,
             skills: document.getElementById('skills').value.split(',').map(skill => skill.trim()), 
-            status: document.getElementById('jobStatus').value,  // Include status in the update
+            status: document.getElementById('jobStatus').value, 
         };
 
         const logoFile = document.getElementById('companyLogo').files[0];
         if (logoFile) {
             const reader = new FileReader();
             reader.onload = function (e) {
-                updatedJob.companyLogo = e.target.result.split(',')[1];  // Base64 encoded image
+                updatedJob.companyLogo = e.target.result.split(',')[1];  
                 sendJobUpdate(updatedJob);
             };
             reader.readAsDataURL(logoFile);
@@ -134,7 +143,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             alert('Job updated successfully!');
             // Optionally redirect
-            // window.location.href = '/agentjobs.html';
+            console.log("Redirecting to /agentjobs.html...");
+        
+            setTimeout(() => {
+                window.location.href = '/agentjobs.html';  // Add a 1-second delay before redirect
+            }, 1000);    
         })
         .catch(error => {
             console.error('Error updating job:', error);

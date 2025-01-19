@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (job.status === 'applied') {
                 statusClass = 'applied';
                 statusText = 'Applied';
-            }else if (job.status === 'interview') {
+            } else if (job.status === 'interview') {
                 statusClass = 'interview';
                 statusText = 'Interview';
             }
@@ -63,13 +63,19 @@ document.addEventListener('DOMContentLoaded', function() {
             jobItem.innerHTML = `
                 <div class="card mb-3 shadow job-card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <div class="job-status ${statusClass}">${statusText}</div>
+                        <div class="job-status ${statusClass} show-status">${statusText}</div>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <!-- Left side: Job details -->
                             <div class="col-8">
-                                <h5 class="card-title">${job.job.title}</h5>
+                           
+                            <!-- Display the company logo if it exists -->
+                            ${job.job.companyLogo ? 
+                                `<img src="data:image/png;base64,${job.job.companyLogo}" alt="${job.job.title} Logo" class="company-logo" />` : ''}
+                           
+                      
+                        <h5 class="card-title">${job.job.title}</h5>
                                 <p class="card-text">${job.job.description}</p>
                                 <p><strong>Location:</strong> ${job.job.location}</p>
                                 <p><strong>Salary:</strong> $${new Intl.NumberFormat().format(job.job.salary)}</p>
@@ -97,6 +103,7 @@ function storeToken(token) {
     localStorage.setItem('token', token);
     localStorage.setItem('token_expiry', expiryTime);
 }
+
 window.addEventListener('DOMContentLoaded', function() {
     // Retrieve the profile image URL from localStorage
     const storedProfileImage = localStorage.getItem('profileImage');
@@ -110,5 +117,21 @@ window.addEventListener('DOMContentLoaded', function() {
       // If no image is stored, you can either keep a placeholder or default image
       profileImageNavElement.src = 'frontend/assets/2.png'; // Default image for the nav
     }
-  });
-  
+});
+
+// Example JavaScript to add the 'show-status' class when needed
+function showJobStatus(statusElement, statusClass) {
+    // Ensure the status is visible with a fade-in effect
+    statusElement.classList.add('show-status');
+    
+    // Add the corresponding color class based on the job status
+    statusElement.classList.add(statusClass); 
+}
+
+// Example usage for a job with status
+const jobStatusElement = document.querySelector('.job-status'); // Get the status element
+
+// Show "Approved" status after a delay (for demo purposes)
+setTimeout(() => {
+    showJobStatus(jobStatusElement, 'approved'); // Add the 'approved' status with fade-in
+}, 500); // This is just a delay for demonstration

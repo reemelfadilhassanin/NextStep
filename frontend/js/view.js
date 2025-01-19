@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchJobDetails(jobId) {
-    fetch(`http://localhost:5000/api/jobs/jobs/${jobId}`, {
+    fetch(`http://localhost:5000/api/jobs/${jobId}`, {  // Fixed endpoint
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -61,7 +61,12 @@ function displayJobDetails(job) {
     const statusText = (jobStatus === 'open') ? 'Open' : 'Closed';
 
     const jobDetailsHTML = `
-      <div class="job-header">
+    <div class="job-header">
+    <!-- Display the company logo if it exists -->
+    ${job.companyLogo ? `<img src="data:image/png;base64,${job.companyLogo}" alt="${job.title} Logo" class="company-logo" />` : ''}
+    <h3>${job.title}</h3>
+</div>
+      <div class="header">
           <div class="job-header-item">
               <i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> ${job.location}
           </div>
@@ -71,9 +76,10 @@ function displayJobDetails(job) {
           <div class="job-header-item">
               <i class="fas fa-check-circle"></i> <strong>Status:</strong> ${statusText}
           </div>
+          
       </div>
       
-      <h2>${job.title}</h2>
+    
       <p><strong>Description:</strong></p>
       <p>${job.description}</p>
 
@@ -85,7 +91,7 @@ function displayJobDetails(job) {
 
       <!-- Apply Button -->
       <button id="applyBtn" class="btn btn-primary" ${hasApplied ? 'disabled' : ''}>
-        ${hasApplied ? 'Applied' : ''}
+        ${hasApplied ? 'Applied' : 'Apply'}
       </button>
     `;
 

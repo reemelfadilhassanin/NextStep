@@ -1,6 +1,7 @@
 import Job from '../models/Job.js';
 import Application from '../models/Application.js';
 import Profile from '../models/Profile.js';
+import Fuse from 'fuse.js'; // Import Fuse.js
 
 // Apply for a job
 export const applyForJob = async (req, res) => {
@@ -275,27 +276,76 @@ export const deleteJob = async (req, res) => {
   }
 };
 
+
+
 export const recommendJobs = async (req, res) => {
   try {
     const { skills } = req.query;  // Get 'skills' from query parameters
 
-    // Prepare the query filter
-    let query = {};
-
-    if (skills) {
-      // If skills are provided, split the skills by comma and find matching jobs
-      const skillsArray = skills.split(',').map(skill => skill.trim().toLowerCase());
-      query.skillsRequired = { $in: skillsArray };  // Match any job that requires any of the skills in the list
+    if (!skills) {
+      return res.status(400).json({ message: 'Skills query parameter is required' });
     }
 
-    // Query the jobs collection
-    const jobs = await Job.find(query);
+    // Split skills into an array and clean up (trim and lowercase)
+    const skillsArray = skills.split(',').map(skill => skill.trim().toLowerCase());
 
-    if (jobs.length === 0) {
-      return res.status(404).json({ message: 'No matching jobs found' });
+    // First, get the authenticated user's profile to extract their skills
+    const userProfile = await Profile.findOne({ user: req.user.id });
+
+    if (!userProfile) {
+      return res.status(404).json({ message: 'User profile not found' });
     }
 
-    return res.status(200).json(jobs);
+    // Get skills from the user's profile
+    const userSkills = userProfile.skills.map(skill => skill.toLowerCase()) || [];
+
+    // Merge user skills with query skills (if needed)
+    const combinedSkills = [...new Set([...skillsArray, ...userSkills])];
+
+    // Query the jobs collection to get all jobs with skillsRequired
+    const allJobs = await Job.find({ status: 'open' });  // Only open jobs
+
+    if (allJobs.length === 0) {
+      return res.status(404).json({ message: 'No jobs found' });
+    }
+
+    // Set up Fuse.js options for fuzzy searching
+    const fuse = new Fuse(allJobs, {
+      keys: ['skillsRequired'],  // Key to search within the job
+      threshold: 0.3,  // Lower threshold for more strict matching (adjust as needed)
+      includeScore: true,  // Optionally include scores to debug results
+      useExtendedSearch: true,  // Allow extended search features
+    });
+
+    // Fuse search using the combined skills array
+    const fuseResults = fuse.search(combinedSkills.join(' '));
+
+    // If no matches are found using Fuse.js, try direct matching in the database
+    if (fuseResults.length === 0) {
+      console.log("No fuzzy matches found, searching with direct skill matching...");
+      const query = { skillsRequired: { $in: combinedSkills } };
+      const directMatches = await Job.find(query).limit(10);  // Limit the number of results
+
+      if (directMatches.length === 0) {
+        return res.status(404).json({ message: 'No matching jobs found based on skills' });
+      }
+
+      return res.status(200).json(directMatches);
+    }
+
+    // Extract matched job IDs from Fuse.js results
+    const matchedJobIds = fuseResults.map(result => result.item._id);
+
+    // Query the jobs collection using matched job IDs
+    const matchedJobs = await Job.find({ _id: { $in: matchedJobIds } });
+
+    if (matchedJobs.length === 0) {
+      return res.status(404).json({ message: 'No matching jobs found based on your skills' });
+    }
+
+    // Return matched jobs
+    return res.status(200).json(matchedJobs);
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server error', error: error.message });
@@ -462,3 +512,72 @@ export const getApplicationsForJob = async (req, res) => {
 
 
 
+
+export const getJobRecommendations = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userProfile = await Profile.findOne({ user: userId });
+
+    if (!userProfile) {
+      return res.status(404).json({ message: 'User profile not found.' });
+    }
+
+    // Split the skills string into an array of individual skills if it is a single string
+    let userSkills = userProfile.skills[0]; // Assuming the skills field is an array with one string
+    userSkills = userSkills.split(',').map(skill => skill.trim().toLowerCase()); // Split and normalize user skills
+
+    // Define a mapping of commonly different skill variations
+    const skillMapping = {
+      'nodejs': ['node.js', 'nodejs'], // Normalizing "node.js" and "nodejs"
+      'javascript': ['javascript'], // Keep "javascript" as is
+      'react': ['react'], // Keep "react" as is
+      // Add more mappings if needed for other common variations
+    };
+
+    // Normalize the job skills to match with user skills
+    const normalizeSkills = (skills) => {
+      return skills.map(skill => {
+        // Match skill variations
+        for (let key in skillMapping) {
+          if (skillMapping[key].includes(skill.trim().toLowerCase())) {
+            return key; // Normalize to a common form (e.g., "nodejs")
+          }
+        }
+        return skill.trim().toLowerCase(); // Default to the skill as is if no mapping is found
+      });
+    };
+
+    // Fetch jobs that match the user's skills
+    const recommendedJobs = await Job.find();
+
+    // Filter jobs by matching skills
+    const filteredJobs = recommendedJobs.filter(job => {
+      const jobSkills = normalizeSkills(job.skillsRequired); // Normalize job skills
+      const matchedSkills = userSkills.filter(skill => jobSkills.includes(skill)); // Find matching skills
+
+      return matchedSkills.length > 0; // If there are matching skills, include the job
+    });
+
+    // Return jobs, or a message if no matches are found
+    if (filteredJobs.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: 'No job recommendations match your skills.',
+        jobs: [],
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Jobs recommended based on your skills.',
+      jobs: filteredJobs,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'An error occurred while fetching job recommendations.',
+      error: error.message,
+    });
+  }
+};

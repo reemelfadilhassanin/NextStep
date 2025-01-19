@@ -80,25 +80,45 @@ document.getElementById('searchBtn').addEventListener('click', function() {
 
             const hasApplied = appliedJobs.includes(job._id);  // Check if job is already applied
 
+            // Format the posting date
+            const postedDate = new Date(job.createdAt);
+            const formattedDate = postedDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+
             jobItem.innerHTML = `
-                <h3>${job.title}</h3>
+            <div class="job-header">
+            <!-- Display the company logo if it exists -->
+            ${job.companyLogo ? `<img src="data:image/png;base64,${job.companyLogo}" alt="${job.title} Logo" class="company-logo" />` : ''}
+            <h3>${job.title}</h3>
+        </div>
                 <p>${job.description}</p>
                 <p><strong>Location:</strong> ${job.location}</p>
                 <p><strong>Salary:</strong> $${new Intl.NumberFormat().format(job.salary)}</p>
                 <p><strong>Type:</strong> ${job.type}</p>
                 <p><strong>Remote:</strong> ${job.remote ? 'Yes' : 'No'}</p>
-                <button class="view-btn" data-job-id="${job._id}">View</button>
+                <p><strong>Posted on:</strong> ${formattedDate}</p> <!-- Show the formatted date -->
+
+                <!-- Icon for details -->
+                <button class="view-details-btn" data-job-id="${job._id}">
+                    <i class="fas fa-info-circle"></i> Details
+                </button>
+
                 <button class="apply-btn" data-job-id="${job._id}" ${hasApplied ? 'disabled' : ''}>${hasApplied ? 'Applied' : 'Apply'}</button>
             `;
 
             jobListContainer.appendChild(jobItem);
         });
 
-        // Add event delegation for both "view-btn" and "apply-btn"
+        // Add event delegation for both "view-details-btn" and "apply-btn"
         jobListContainer.addEventListener('click', function(e) {
-            if (e.target.classList.contains('view-btn')) {
+            if (e.target.classList.contains('view-details-btn')) {
                 const jobId = e.target.getAttribute('data-job-id');
-                viewJob(jobId);  // Call viewJob() when View button is clicked
+                viewJob(jobId);  // Call viewJob() when Details button is clicked
             }
             if (e.target.classList.contains('apply-btn') && !e.target.disabled) {
                 const jobId = e.target.getAttribute('data-job-id');
@@ -215,6 +235,7 @@ function openApplyModal(jobId) {
         applyModal.style.display = 'none';
     };
 }
+
 window.addEventListener('DOMContentLoaded', function() {
     // Retrieve the profile image URL from localStorage
     const storedProfileImage = localStorage.getItem('profileImage');
@@ -228,5 +249,4 @@ window.addEventListener('DOMContentLoaded', function() {
       // If no image is stored, you can either keep a placeholder or default image
       profileImageNavElement.src = 'frontend/assets/2.png'; // Default image for the nav
     }
-  });
-  
+});

@@ -1,3 +1,77 @@
+/* Style for company logo */
+.company-logo {
+    width: 60px; /* Increase the logo size */
+    height: 60px; /* Increase the logo size */
+    border-radius: 50%; /* Keep the logo circular */
+    margin-right: 20px; /* Increase space between logo and job title */
+    object-fit: cover; /* Ensure the logo maintains aspect ratio */
+}
+
+/* Job header style */
+.job-header {
+    display: flex;
+    align-items: center; /* Align logo and title vertically */
+    gap: 15px; /* Add space between logo and title */
+}
+
+/* Optional: Adjust font size for better alignment */
+.job-header h3 {
+    font-size: 24px; /* Adjust job title font size */
+    margin: 0; /* Remove any default margins */
+}
+
+/* Optional: Add hover effect on the logo */
+.job-header .company-logo:hover {
+    opacity: 0.8; /* Slightly dim the logo on hover */
+    cursor: pointer; /* Add a pointer cursor to indicate it's clickable */
+}
+
+.job-item {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.job-item h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.job-item p {
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.job-item button {
+    margin-right: 10px;
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.job-item button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+.view-details-btn {
+    background-color: #28a745;
+}
+
+.view-details-btn i {
+    margin-right: 5px;
+}
+
+/* Add hover effect for buttons */
+.job-item button:hover {
+    opacity: 0.8;
+}
+
 /* Reset some default styles */
 body, h1, h2, p, ul {
     margin: 0;

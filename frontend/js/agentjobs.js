@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    // Update navbar with company logo from localStorage
+    const companyLogo = localStorage.getItem('companyLogo');
+
     const loader = document.getElementById('loadingSpinner');
     loader.style.display = 'block';
 
@@ -29,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const jobsList = document.getElementById('jobsList');
         if (data.length === 0) {
-            jobsList.innerHTML = '<p>No jobs found.</p>';
+            jobsList.innerHTML = '<p class="text-muted">No jobs found.</p>';
         } else {
             data.forEach(job => {
                 fetch(`/api/jobs/${job._id}`, {
@@ -39,8 +42,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.json())
                 .then(jobData => {
                     const jobElement = document.createElement('div');
-                    jobElement.classList.add('job-card');
-                    
+                    jobElement.classList.add('job-card', 'border', 'rounded', 'p-3', 'mb-4', 'shadow-sm');
+
                     let statusIcon, statusColor;
                     if (jobData.status === 'open') {
                         statusIcon = 'check-circle';
@@ -50,38 +53,59 @@ document.addEventListener('DOMContentLoaded', function () {
                         statusColor = '#dc3545';
                     }
 
-                    const applicantColor = jobData.applicationCount > 0 ? '#007bff' : '#6c757d';
+                    // Create the job card HTML with the logo, title, and status properly aligned
+                    jobElement.innerHTML = `
+                        <div class="job-header d-flex align-items-center mb-4 p-4 rounded-3 shadow-sm" style="font-family: 'Roboto', sans-serif; background-color: #f0f8ff;">
+                            <!-- Company Logo 
+                            <div class="company-logo me-3" style="display: none;">
+                                <img src="data:image/png;base64,${companyLogo}" alt="Company Logo" style="max-height: 50px; max-width: 50px;" id="companyLogo"/>
+                            </div>
+-->
+                            <!-- Job Title -->
+                            <h3 class="job-title fs-4 fw-bold text-dark flex-grow-1">${jobData.title}</h3>
 
-                    jobElement.innerHTML = ` 
-                        <div class="job-header">
-                            <h3 class="job-title">${jobData.title}</h3>
-                            <div class="job-status" style="color: ${statusColor};">
+                            <!-- Job Status aligned to the right -->
+                            <div class="job-status ms-3" style="color: ${statusColor};">
                                 <i class="fas fa-${statusIcon}"></i>
-                                <span>${jobData.status.charAt(0).toUpperCase() + jobData.status.slice(1)}</span>
+                                <span class="ms-1">${jobData.status.charAt(0).toUpperCase() + jobData.status.slice(1)}</span>
                             </div>
-                            <div class="job-applicants" style="color: ${applicantColor};">
-                                <i class="fas fa-users"></i>
-                                <span>${jobData.applicationCount || 0} Applicants</span>
-                                <button class="btn btn-info view-applicants-btn" data-job-id="${jobData._id}">View Applicants</button>
+
+                            <!-- Job Action Icons (Update and Delete) -->
+                            <div class="job-actions ms-3 d-flex">
+                                <a href="/update-job.html?id=${jobData._id}" class="me-2">
+                                    <i class="fas fa-edit fs-4" title="Update Job"></i>
+                                </a>
+                                <button class="btn btn-link p-0 delete-job" data-job-id="${jobData._id}">
+                                    <i class="fas fa-trash-alt fs-4 text-danger" title="Delete Job"></i>
+                                </button>
                             </div>
                         </div>
-                        <p class="job-description"><strong>Description:</strong> ${jobData.description}</p>
-                        <p class="job-location"><strong>Location:</strong> ${jobData.location}</p>
-                        <p class="job-salary"><strong>Salary:</strong> $${jobData.salary}</p>
-                        <p class="job-type"><strong>Job Type:</strong> ${jobData.type}</p>
-                        <p class="job-remote"><strong>Remote:</strong> ${jobData.remote ? 'Yes' : 'No'}</p>
-                        <p class="job-skills"><strong>Skills Required:</strong> ${jobData.skillsRequired.join(', ')}</p>
-                        <p class="job-posted-at"><strong>Posted At:</strong> ${new Date(jobData.createdAt).toLocaleDateString()}</p>
-                        <p class="job-updated-at"><strong>Last Updated:</strong> ${new Date(jobData.updatedAt).toLocaleDateString()}</p>
-                        <div class="job-actions">
-                            <a href="/update-job.html?id=${jobData._id}" class="btn btn-primary">
-                                <i class="fas fa-edit"></i> Update Details
-                            </a>
-                            <button class="btn btn-danger delete-job" data-job-id="${jobData._id}">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
+
+                        <!-- Job Meta Information (Location, Posted At) -->
+                        <div class="job-meta d-flex flex-column flex-sm-row justify-content-between w-100 p-4" style="font-family: 'Roboto', sans-serif;">
+                            <p class="job-location text-muted mb-2 mb-sm-0">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i><strong>Location:</strong> ${jobData.location}
+                            </p>
+                            <p class="job-posted-at text-muted mb-0">
+                                <i class="fas fa-calendar text-primary me-2"></i><strong>Posted At:</strong> ${new Date(jobData.createdAt).toLocaleDateString()}
+                            </p>
                         </div>
+
+                        <!-- Job Details Section -->
+                        <div class="job-details p-4" style="font-family: 'Roboto', sans-serif;">
+                            <p class="job-description text-muted"><strong>Description:</strong> ${jobData.description}</p>
+                            <p class="job-salary"><strong>Salary:</strong> $${jobData.salary}</p>
+                            <p class="job-type"><strong>Job Type:</strong> ${jobData.type}</p>
+                            <p class="job-remote"><strong>Remote:</strong> ${jobData.remote ? 'Yes' : 'No'}</p>
+                            <p class="job-skills"><strong>Skills Required:</strong> ${jobData.skillsRequired.join(', ')}</p>
+                            <p class="job-updated-at">
+                                <i class="fas fa-sync-alt text-primary me-2"></i><strong>Last Updated:</strong> ${new Date(jobData.updatedAt).toLocaleDateString()}
+                            </p>
+                        </div>
+
                         <hr>
+
+                        <!-- Applicant Details Section (hidden by default) -->
                         <div class="applicant-details" style="display: none;">
                             <div class="applicant-list"></div>
                         </div>
@@ -89,7 +113,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     jobsList.appendChild(jobElement);
 
-                    // Fetch applicants for the job
+                    // Display the company logo after clicking the "Update" button
+                    const updateButton = jobElement.querySelector('.fa-edit');
+                    if (updateButton) {
+                        updateButton.addEventListener('click', () => {
+                            const companyLogoElement = jobElement.querySelector('.company-logo');
+                            if (companyLogoElement) {
+                                companyLogoElement.style.display = 'block';  // Show the company logo
+                            }
+                        });
+                    }
+
+                    // Fetch applicants for the job (optional, based on your needs)
                     fetch(`/api/jobs/${jobData._id}/applications`, {
                         method: 'GET',
                         headers: { 'Authorization': 'Bearer ' + token }
@@ -148,80 +183,5 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Error fetching jobs:', error);
         loader.style.display = 'none';
         alert('Error fetching jobs. Please try again later.');
-    });
-
-    // Event listener for "View Applicants" button
-    document.addEventListener('click', function (event) {
-        if (event.target && event.target.classList.contains('view-applicants-btn')) {
-            const jobId = event.target.getAttribute('data-job-id');
-            const jobElement = event.target.closest('.job-card');
-            const applicantDetailsContainer = jobElement.querySelector('.applicant-details');
-            const applicantList = applicantDetailsContainer.querySelector('.applicant-list');
-
-            if (applicantDetailsContainer.style.display === 'none' || applicantDetailsContainer.style.display === '') {
-                applicantDetailsContainer.style.display = 'block';
-                const applicants = JSON.parse(jobElement.dataset.applicants || '[]');
-
-                applicantList.innerHTML = '';
-                if (applicants.length > 0) {
-                    applicants.forEach(application => {
-                        const applicantCard = document.createElement('div');
-                        applicantCard.classList.add('applicant-card', 'card', 'mb-3');
-                        applicantCard.innerHTML = `
-                            <div class="card-body">
-                                <h5 class="card-title">${application.user.email}</h5>
-                                <p><strong>Status:</strong> ${application.status}</p>
-                                <p><strong>Applied At:</strong> ${new Date(application.appliedAt).toLocaleDateString()}</p>
-                                <p><strong>Resume:</strong> <a href="/${application.resume}" target="_blank">Download Resume</a></p>
-                                <p><strong>Experience:</strong> ${application.profile.experience.map(exp => `${exp.role} at ${exp.company}`).join(', ')}</p>
-                                <p><strong>Education:</strong> ${application.profile.education.map(edu => `${edu.degree} from ${edu.university}`).join(', ')}</p>
-                                <p><strong>Skills:</strong> ${application.profile.skills.join(', ')}</p>
-                                <div class="form-group">
-                                    <label for="statusSelect">Change Status:</label>
-                                    <select class="form-control" id="statusSelect">
-                                    <option value="applied" ${application.status === 'applied' ? 'selected' : ''}>applied</option>
-                                        <option value="interview" ${application.status === 'interview' ? 'selected' : ''}>Interview</option>
-                                        <option value="approved" ${application.status === 'approved' ? 'selected' : ''}>Approved</option>
-                                        <option value="rejected" ${application.status === 'rejected' ? 'selected' : ''}>Rejected</option>
-                                    </select>
-                                </div>
-                            </div>
-                        `;
-                        applicantList.appendChild(applicantCard);
-
-                        // Handle status change
-                        applicantCard.querySelector('#statusSelect').addEventListener('change', function (e) {
-                            const newStatus = e.target.value;
-
-                            fetch(`/api/applications/user/${application.user._id}/status`, {
-                                method: 'PUT',
-                                headers: {
-                                    'Authorization': 'Bearer ' + token,
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ status: newStatus })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.message === 'Application statuses updated successfully') {
-                                    alert('Applicant status updated');
-                                    application.status = newStatus;  // Update the status in the UI
-                                    // Optionally, update UI with the new status
-                                } else {
-                                    alert('Error updating status');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error updating status:', error);
-                            });
-                        });
-                    });
-                } else {
-                    applicantList.innerHTML = '<p>No applicants found for this job.</p>';
-                }
-            } else {
-                applicantDetailsContainer.style.display = 'none';
-            }
-        }
     });
 });
