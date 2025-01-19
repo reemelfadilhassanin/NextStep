@@ -1,63 +1,64 @@
-import User from '../models/user.model.js';
+// controllers/authController.js
+import User from '../models/user.js';
 
 // Register a new user
- const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   const { email, password, role } = req.body;
 
   try {
-    if (!email || !password || !role) {
-      return res.status(400).json({ message: 'Email, password, and role are required.' });
-    }
-
+    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists.' });
+      return res.status(400).json({ message: 'User already exists' });
     }
 
+    // Create a new user
     const user = new User({ email, password, role });
+
+    // Save the user to the database
     await user.save();
 
+    // Generate auth token with 7 days expiration
     const token = user.generateAuthToken();
+
+    // Respond with the token and role
     res.status(201).json({
-      message: 'User registered successfully.',
       token,
-      role: user.role,
+      role: user.role // Include the role in the response
     });
   } catch (err) {
-    console.error('Error in registerUser:', err);
-    res.status(500).json({ message: 'Server error. Please try again later.' });
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 // Login an existing user
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required.' });
-    }
-
+    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials.' });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    // Compare passwords
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials.' });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
+    // Generate auth token with 7 days expiration
     const token = user.generateAuthToken();
+
+    // Respond with the token and role
     res.status(200).json({
-      message: 'Login successful.',
       token,
-      role: user.role,
+      role: user.role // Include the role in the response
     });
   } catch (err) {
-    console.error('Error in loginUser:', err);
-    res.status(500).json({ message: 'Server error. Please try again later.' });
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
-
-export { registerUser, loginUser };

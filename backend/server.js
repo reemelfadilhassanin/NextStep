@@ -1,58 +1,102 @@
+import messageRoutes from './routes/messageRoutes.js';
 import express from 'express';
-import { createJob, getJobsByCompany, updateJob, getApplicationCountForJob, getJobsAppliedByUser, applyForJob, updateJobStatus, getFilteredJobs, getJobs, getJobDetails, recommendJobs, deleteJob, getApplicationsForJob } from '../controllers/jobController.js';
-import { agentRoleMiddleware } from '../middlewares/authMiddleware.js';  // Ensure agentRoleMiddleware is imported
-import { updateApplicationStatus } from '../controllers/applicationController.js';  // Import from applicationController
-import applicationRoute from '../routes/applicationRoutes.js';  // Import the application routes
-import upload from '../middlewares/uploadM.js';  // Import the upload middleware
-import { authMiddleware } from '../middlewares/authMiddleware.js';
-const router = express.Router();
-// Route to get filtered jobs based on query parameters (for job seekers)
-router.get('/search', authMiddleware, getFilteredJobs);  // Search for jobs (authenticated job seeker)
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
+import bodyParser from 'body-parser';
+import helmet from 'helmet';
+import chalk from 'chalk';
+import upload from './middlewares/upload.js';
+import authRoutes from './routes/auth.js';
+import profileRoutes from './routes/profile.js';
+import jobRoutes from './routes/jobRoutes.js';
+import applicationRoutes from './routes/applicationRoutes.js';
+import { getJobDetails } from './controllers/jobController.js';
 
-// Job routes
-router.use('/:jobId/applications', applicationRoute);  // Use the applicationRoute for job applications
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: '.env.test' });
+} else {
+  dotenv.config();
+}
 
-// Route to create a job (Authenticated agent only)
-router.post('/', authMiddleware, agentRoleMiddleware, createJob); // Apply agentRoleMiddleware here
+const app = express();
 
-// Route to get all jobs posted by the authenticated company (Agent)
-router.get('/', authMiddleware, getJobsByCompany);
+app.use(cors());
+app.use(express.json());
+app.use(bodyParser.json());
+app.use(helmet());
 
-// Get job details by jobId
-router.get('/api/jobs/:jobId', getJobDetails);
+const uploadDir = path.resolve('uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+  console.log(chalk.green('Uploads directory created'));
+}
 
-// Route to get all jobs with optional filters (Accessible by any authenticated user)
-router.get('/', authMiddleware, getJobs);
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log(chalk.green('MongoDB connected successfully')))
+  .catch((err) => console.log(chalk.red('MongoDB connection error:', err)));
 
-// Route to get filtered jobs based on query parameters (for job seekers)
-router.get('/search', authMiddleware, getFilteredJobs);  // Search for jobs (authenticated job seeker)
+const frontendPath = path.resolve('C:/Users/misre/OneDrive/سطح المكتب/traiing/frontend');
+app.use(express.static(frontendPath));
+app.use('/uploads', express.static(uploadDir));
 
-// Route to update a job (Authenticated agent only)
-router.put('/:id', authMiddleware, agentRoleMiddleware, updateJob); // Apply agentRoleMiddleware here
+app.use('/api/auth', authRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/applications', applicationRoutes);
 
-// Route to update job status (Authenticated agent only)
-router.put('/:id/status', authMiddleware, agentRoleMiddleware, updateJobStatus); // Apply agentRoleMiddleware here
+app.post('/api/applications/:jobId/apply', upload.single('resume'), async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { userId } = req.body;
 
-// In jobRoute.js
-router.get('/:id/applications/count', authMiddleware, getApplicationCountForJob);
+    if (!req.file) {
+      return res.status(400).json({ message: 'Resume is required.' });
+    }
 
-// Route to get all jobs applied by the user
-router.get('/user/applications', authMiddleware, getJobsAppliedByUser);
+    const newApplication = new Application({
+      job: jobId,
+      user: userId,
+      resume: req.file.path,
+      status: 'applied',
+    });
 
-// Route to apply for a job (Authenticated user)
-router.post('/:jobId/apply', authMiddleware, upload.single('resume'), applyForJob);
-// Route to update job status (Authenticated agent only)
-router.put('/:id/status', authMiddleware, agentRoleMiddleware, updateJobStatus);
+    await newApplication.save();
 
-// Route to get job details (accessible by all)
-router.get('/jobs/:jobId', getJobDetails);
+    return res.status(201).json({ message: 'Application submitted successfully', application: newApplication });
+  } catch (error) {
+    console.error(chalk.red(error));
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
 
-// Route to get job recommendations
-router.get('/recommend', authMiddleware, recommendJobs);
+app.get('/api/jobs/:jobId', getJobDetails);
 
-// Route to delete a job (Authenticated agent only)
-router.delete('/:id', authMiddleware, agentRoleMiddleware, deleteJob);  // Apply agentRoleMiddleware here
-// In jobRoute.js
-router.get('/:jobId/applications', authMiddleware, agentRoleMiddleware, getApplicationsForJob);
+app.get('*', (req, res) => {
+  const indexPath = path.resolve(frontendPath, 'index.html');
+  console.log(chalk.cyan('Serving index.html from:', indexPath));
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.log(chalk.red('Error serving index.html:', err));
+      res.status(500).send({ message: 'Internal server error' });
+    }
+  });
+});
 
-export default router;
+app.use('/api/messages', messageRoutes);
+
+app.use((err, req, res, next) => {
+  const status = err.name && err.name === 'ValidationError' ? 400 : 500;
+  res.status(status).send({ message: err.message });
+});
+
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(chalk.green(`Server running on http://localhost:${PORT}`));
+  });
+}
+
+export default app;

@@ -254,3 +254,62 @@ textarea {
         height: 150px;
     }
 }
+
+
+.filter-section h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    color: #007bff;
+    
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+/* Style the Form Group */
+.form-group {
+    margin-bottom: 20px; /* Increased bottom margin for more spacing between form fields */
+}
+
+/* Label Styling */
+.form-group label {
+    font-size: 16px; /* Larger label text for better readability */
+    font-weight: 600; /* Bold label text */
+    color: #333; /* Dark grey color for the text */
+    margin-bottom: 8px; /* Space between label and input */
+    display: block; /* Ensure label takes full width */
+}
+
+/* Select Dropdown Styling */
+.form-group select {
+    width: 100%; /* Full width of the container */
+    padding: 12px; /* Adequate padding for a clean look */
+    border: 1px solid #ccc; /* Light border around the select */
+    border-radius: 5px; /* Rounded corners for a smooth look */
+    font-size: 16px; /* Consistent font size */
+    color: #333; /* Dark grey text color */
+    background-color: #fff; /* White background for the dropdown */
+    appearance: none; /* Remove default browser dropdown arrow */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for a 3D effect */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition on focus */
+}
+
+/* Add custom arrow using pseudo-element */
+.form-group select::-ms-expand {
+    display: none; /* Remove the default dropdown arrow in IE/Edge */
+}
+
+/* Hover effect on select */
+.form-group select:hover {
+    border-color: #ff0800; /* Change border color on hover */
+    box-shadow: 0 2px 6px rgba(255, 0, 0, 0.2); /* Shadow on hover */
+}
+
+/* Focus effect on select */
+.form-group select:focus {
+    outline: none; /* Remove outline */
+    border-color: #ff0800; /* Blue border when focused */
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); /* Blue shadow on focus */
+}
+

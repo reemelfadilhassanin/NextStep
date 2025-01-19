@@ -1,35 +1,26 @@
-import Application from '../models/Application.js';  // Ensure correct import path
+import Application from '../models/Application.js';
 import Job from '../models/Job.js';
+import Profile from '../models/Profile.js';
 
-// Update application status
 export const updateApplicationStatus = async (req, res) => {
   try {
-    const { applicationId } = req.params;  // Get applicationId from route parameter
-    const { status } = req.body;  // Get status from the request body
+    const { applicationId } = req.params;
+    const { status } = req.body;
 
-    console.log('Received applicationId:', applicationId);  // Log received applicationId
-    console.log('Received status:', status);  // Log received status
-
-    // Validate the status
     const validStatuses = ['approved', 'rejected', 'interviewing', 'applied'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: 'Invalid status value. Valid values are "approved", "rejected", "interviewing", and "applied".' });
     }
 
-    // Ensure the user (agent) is authenticated and has a role
     if (!req.user || req.user.role !== 'agent') {
       return res.status(403).json({ message: 'You do not have permission to update the application status.' });
     }
 
-    // Find the application by its ID
     const application = await Application.findById(applicationId);
     if (!application) {
       return res.status(404).json({ message: 'Application not found' });
     }
 
-    console.log('Application found:', application);  // Log the application found
-
-    // Check if the application is in the right state to change status
     if (application.status === 'approved' && status === 'interviewing') {
       return res.status(400).json({ message: 'Cannot change status from approved to interviewing.' });
     }
@@ -40,26 +31,19 @@ export const updateApplicationStatus = async (req, res) => {
       return res.status(400).json({ message: 'Cannot update a rejected application from applied.' });
     }
 
-    // Find the job related to this application
     const job = await Job.findById(application.job);
     if (!job) {
       return res.status(404).json({ message: 'Job not found' });
     }
 
-    console.log('Job found:', job);  // Log the job found
-
-    // Ensure the job belongs to the authenticated agent
     if (job.postedBy.toString() !== req.user.id) {
       return res.status(403).json({ message: 'You are not authorized to manage this application' });
     }
 
-    // Update the status of the application
     application.status = status;
-    application.updatedAt = Date.now();  // Update the timestamp
+    application.updatedAt = Date.now();
 
-    // Save the updated application
     await application.save();
-    console.log('Application updated:', application);  // Log the updated application
 
     return res.status(200).json({
       message: 'Application status updated successfully',
@@ -67,28 +51,21 @@ export const updateApplicationStatus = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
-
-    // Handle token expiration error
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Token has expired. Please log in again.' });
     }
 
-    // Catch any other errors
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-// Get application details
-// Controller to get application details
 export const getApplicationDetails = async (req, res) => {
   try {
     const applicationId = req.params.applicationId;
 
-    // Fetch the application by ID and populate necessary fields
     const application = await Application.findById(applicationId)
       .populate('user', 'name email')
-      .populate('profile', 'bio skills linkedin github twitter') // Include more profile details
+      .populate('profile', 'bio skills linkedin github twitter')
       .populate('job', 'title company location')
       .exec();
 
@@ -96,10 +73,127 @@ export const getApplicationDetails = async (req, res) => {
       return res.status(404).json({ message: 'Application not found' });
     }
 
-    // Return the application details
     return res.status(200).json(application);
   } catch (error) {
-    console.error('Error fetching application details:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const deleteApplication = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+
+    const application = await Application.findById(applicationId);
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found' });
+    }
+
+    const job = await Job.findById(application.job);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    if (job.postedBy.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'You are not authorized to delete this application' });
+    }
+
+    await application.remove();
+
+    return res.status(200).json({ message: 'Application deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const createApplication = async (req, res) => {
+  try {
+    const { job, user, profile, resume, experience, education, skills, socialLinks } = req.body;
+
+    if (!job || !user || !profile || !resume) {
+      return res.status(400).json({ message: 'Job, User, Profile, and Resume are required' });
+    }
+
+    const newApplication = new Application({
+      job,
+      user,
+      profile,
+      resume,
+      experience,
+      education,
+      skills,
+      socialLinks,
+      status: 'applied',
+    });
+
+    const application = await newApplication.save();
+
+    return res.status(201).json({
+      message: 'Application submitted successfully',
+      application,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const getApplicationsForJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+
+    if (!jobId) {
+      return res.status(400).json({ message: 'Job ID is required' });
+    }
+
+    const applications = await Application.find({ job: jobId })
+      .populate('user', 'name email')
+      .populate('profile', 'bio skills linkedin')
+      .populate('job', 'title company location');
+
+    if (applications.length === 0) {
+      return res.status(404).json({ message: 'No applicants found for this job.' });
+    }
+
+    return res.status(200).json({ applications });
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const createApplicationFromProfile = async (req, res) => {
+  try {
+    const { job, resume } = req.body;
+
+    if (!job || !resume) {
+      return res.status(400).json({ message: 'Job and Resume are required.' });
+    }
+
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found. Please create a profile first.' });
+    }
+
+    const { experience, education, skills, socialLinks } = profile;
+
+    const newApplication = new Application({
+      job,
+      user: req.user.id,
+      profile: profile._id,
+      resume,
+      experience,
+      education,
+      skills,
+      socialLinks,
+      status: 'applied',
+    });
+
+    const application = await newApplication.save();
+
+    return res.status(201).json({
+      message: 'Application submitted successfully',
+      application,
+    });
+  } catch (error) {
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

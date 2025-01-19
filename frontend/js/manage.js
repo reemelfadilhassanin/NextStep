@@ -2,7 +2,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Get token and expiry time from localStorage
     const token = localStorage.getItem('token');
     const tokenExpiry = localStorage.getItem('token_expiry');
-
+    
+    console.log("Token: ", token);
+    console.log("Token Expiry: ", tokenExpiry);
+    
     // Token expiration validation (7 days)
     if (!token || !tokenExpiry || Date.now() > tokenExpiry) {
         alert('Your session has expired. Please log in again.');
@@ -14,13 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Get the user's skills (this could be from localStorage, a form, or any other source)
     let userSkills = localStorage.getItem('skills') || ''; // Default skills if not set
-
-    // Function to update skills in localStorage and refresh job recommendations
-    function updateSkills(newSkills) {
-        localStorage.setItem('skills', newSkills);
-        userSkills = newSkills;
-        fetchJobs(); // Re-fetch the jobs after updating skills
-    }
+    console.log("User Skills: ", userSkills);
 
     // Build the query string based on the user's skills
     function buildQueryString() {
@@ -30,53 +27,65 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to fetch job recommendations based on user's skills
     function fetchJobs() {
         const queryString = buildQueryString();
-
+        console.log("Query String: ", queryString);
+    
         // Show a loading indicator while fetching
         const jobListContainer = document.getElementById('recommendedJobList');
         jobListContainer.innerHTML = '<p>Loading jobs...</p>';  // Loading text or spinner
-
-        fetch(`/api/jobs/recommend${queryString}`, {
+    
+        fetch('http://localhost:5000/api/jobs/recommend' + queryString, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}` // Assuming token is stored in localStorage
+                'Authorization': `Bearer ${token}` // Assuming token is stored in localStorage
             }
         })
-            .then(response => response.json())
-            .then(data => {
+        .then(response => response.json())
+        .then(data => {
+            console.log("Job Data: ", data);
+    
+            // Check for success and render jobs
+            if (data.success && data.jobs && data.jobs.length > 0) {
                 jobListContainer.innerHTML = '';  // Clear previous job listings
-
-                if (data.message) {
+    
+                // Get the applied jobs from localStorage
+                const appliedJobs = JSON.parse(localStorage.getItem('appliedJobs')) || [];
+    
+                // Filter out the jobs that the user has already applied for
+                const filteredJobs = data.jobs.filter(job => !appliedJobs.includes(job._id));
+    
+                if (filteredJobs.length === 0) {
                     const noJobsMessage = document.createElement('p');
-                    noJobsMessage.textContent = data.message;
+                    noJobsMessage.textContent = 'No recommended jobs available.';
                     jobListContainer.appendChild(noJobsMessage);
                     return;
                 }
-
-                // Get the applied jobs from localStorage
-                const appliedJobs = JSON.parse(localStorage.getItem('appliedJobs')) || [];
-
-                // Filter out the jobs that the user has already applied for
-                const filteredJobs = data.filter(job => !appliedJobs.includes(job._id));
-
+    
                 // Dynamically populate the job listings
                 filteredJobs.forEach(job => {
                     const jobItem = document.createElement('div');
                     jobItem.classList.add('job-item');
-
                     jobItem.innerHTML = `  
-                        <h3>${job.title}</h3>
+                    <div class="job-header">
+                    <!-- Display the company logo if it exists -->
+                    ${job.companyLogo ? `<img src="data:image/png;base64,${job.companyLogo}" alt="${job.title} Logo" class="company-logo" />` : ''}
+                    <h3>${job.title}</h3>
+                </div>
+                     
                         <p>${job.description}</p>
                         <p><strong>Location:</strong> ${job.location}</p>
                         <p><strong>Salary:</strong> $${new Intl.NumberFormat().format(job.salary)}</p>
                         <p><strong>Type:</strong> ${job.type}</p>
                         <p><strong>Remote:</strong> ${job.remote ? 'Yes' : 'No'}</p>
-                        <button class="view-btn" data-job-id="${job._id}">View</button>
-                        <button class="apply-btn" data-job-id="${job._id}">Apply</button>
+                        <button class="view-btn" data-job-id="${job._id}">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="apply-btn" data-job-id="${job._id}">
+                            <i class="fas fa-paper-plane"></i> Apply
+                        </button>
                     `;
-
                     jobListContainer.appendChild(jobItem);
                 });
-
+    
                 // Event delegation for View and Apply buttons
                 jobListContainer.addEventListener('click', function (e) {
                     if (e.target.classList.contains('view-btn')) {
@@ -88,12 +97,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         openApplyModal(jobId);  // Open modal for applying to job
                     }
                 });
-            })
-            .catch(error => {
-                console.error('Error fetching recommended jobs:', error);
-                jobListContainer.innerHTML = '<p>Error loading jobs. Please try again later.</p>';
-            });
+            } else {
+                jobListContainer.innerHTML = '<p>No jobs available based on your skills.</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching recommended jobs:', error);
+            const jobListContainer = document.getElementById('recommendedJobList');
+            jobListContainer.innerHTML = '<p>Error loading jobs. Please try again later.</p>';
+        });
     }
+    
 
     // Fetch jobs when the page loads
     fetchJobs();
@@ -109,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/api/jobs/${jobId}/apply`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         })
@@ -152,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch(`/api/jobs/${jobId}/apply`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: formData
             })
@@ -189,25 +203,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Store token with 7-day expiration in localStorage
-    function storeToken(token) {
-        const expiryTime = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-        localStorage.setItem('token', token);
-        localStorage.setItem('token_expiry', expiryTime);
-    }
-});
-window.addEventListener('DOMContentLoaded', function() {
     // Retrieve the profile image URL from localStorage
     const storedProfileImage = localStorage.getItem('profileImage');
-  
-    const profileImageNavElement = document.getElementById('profileImageNav'); // Reference to the profile image in the navbar
+    const profileImageNavElement = document.getElementById('profileImageNav');
   
     if (storedProfileImage) {
-      // If a profile image is stored, use it
-      profileImageNavElement.src = storedProfileImage;
+        profileImageNavElement.src = storedProfileImage;
     } else {
-      // If no image is stored, you can either keep a placeholder or default image
-      profileImageNavElement.src = 'frontend/assets/2.png'; // Default image for the nav
+        profileImageNavElement.src = 'frontend/assets/2.png'; // Default image for the nav
     }
-  });
-  
+});
