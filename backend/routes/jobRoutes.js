@@ -1,10 +1,11 @@
 import express from 'express';
 import { createJob, getJobsByCompany, updateJob, getApplicationCountForJob, getJobsAppliedByUser, applyForJob, updateJobStatus, getFilteredJobs, getJobs, getJobDetails, recommendJobs, deleteJob, getApplicationsForJob, getJobRecommendations } from '../controllers/jobController.js';
-import { agentRoleMiddleware } from '../middlewares/authMiddleware.js';
+//import agentRoleMiddleware from '../middlewares/authMiddleware.js';
 import { updateApplicationStatus } from '../controllers/applicationController.js';
 import applicationRoute from '../routes/applicationRoutes.js';
 import upload from '../middlewares/upload.js';
-import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { authMiddleware, agentRoleMiddleware } from '../middlewares/authMiddleware.js';
+
 
 const router = express.Router();
 

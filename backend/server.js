@@ -10,7 +10,7 @@ import helmet from 'helmet';
 import chalk from 'chalk';
 import upload from './middlewares/upload.js';
 import authRoutes from './routes/auth.js';
-import profileRoutes from './routes/profile.js';
+import profileRoutes from './routes/profileRoute.js';
 import jobRoutes from './routes/jobRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
 import { getJobDetails } from './controllers/jobController.js';

@@ -1,5 +1,5 @@
 // controllers/authController.js
-import User from '../models/user.js';
+import User from '../models/User.js';
 
 // Register a new user
 export const registerUser = async (req, res) => {

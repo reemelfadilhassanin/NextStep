@@ -1,5 +1,6 @@
 import Profile from '../models/Profile.js';
-import { authMiddleware } from '../middlewares/authMiddleware.js';
+//import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { authMiddleware, agentRoleMiddleware } from '../middlewares/authMiddleware.js';
 
 // Helper function to safely parse JSON strings
 const parseJSON = (data) => {

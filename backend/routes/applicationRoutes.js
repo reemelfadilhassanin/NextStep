@@ -9,6 +9,7 @@ import {
 } from '../controllers/applicationController.js';
 import { authMiddleware, agentRoleMiddleware } from '../middlewares/authMiddleware.js';
 
+
 const router = express.Router();
 
 router.delete('/:applicationId', authMiddleware, agentRoleMiddleware, deleteApplication);
