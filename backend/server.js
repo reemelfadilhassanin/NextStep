@@ -1,4 +1,6 @@
 import messageRoutes from './routes/messageRoutes.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -14,7 +16,8 @@ import profileRoutes from './routes/profile.js';
 import jobRoutes from './routes/jobRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
 import { getJobDetails } from './controllers/jobController.js';
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 if (process.env.NODE_ENV === 'test') {
   dotenv.config({ path: '.env.test' });
 } else {
@@ -38,7 +41,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log(chalk.green('MongoDB connected successfully')))
   .catch((err) => console.log(chalk.red('MongoDB connection error:', err)));
 
-const frontendPath = path.resolve('C:/Users/misre/OneDrive/سطح المكتب/traiing/frontend');
+const frontendPath = path.resolve(__dirname, process.env.FRONTEND_PATH);
 app.use(express.static(frontendPath));
 app.use('/uploads', express.static(uploadDir));
 
