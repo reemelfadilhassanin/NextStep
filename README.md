@@ -62,3 +62,5 @@ NextStep is a job board where users (applicants) can create profiles, search for
 ### **Authentication**
 
 - **JWT (JSON Web Tokens)**: Used for secure user authentication and authorization across the platform.
+
+### Version Control
