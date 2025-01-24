@@ -8,3 +8,6 @@ import { authMiddleware } from '../middlewares/authMiddleware.js';
 const router = express.Router();
 // Route to get filtered jobs based on query parameters (for job seekers)
 router.get('/search', authMiddleware, getFilteredJobs);  // Search for jobs (authenticated job seeker)
+
+// Job routes
+router.use('/:jobId/applications', applicationRoute);  // Use the applicationRoute for job applications
