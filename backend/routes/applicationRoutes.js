@@ -100,3 +100,39 @@ router.get('/:jobId', authMiddleware, agentRoleMiddleware, async (req, res) => {
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+// Route to get application details (one specific application)
+router.get('/:applicationId', authMiddleware, agentRoleMiddleware, getApplicationDetails);
+
+router.put('/user/:userId/status', authMiddleware, agentRoleMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;  // Get userId from URL
+    const { status } = req.body;    // Get status from body
+
+    // Validate the status
+    if (!status) {
+      return res.status(400).json({ message: 'Status is required' });
+    }
+
+    // Find applications for the given user
+    const applications = await Application.find({ user: userId });
+
+    if (applications.length === 0) {
+      return res.status(404).json({ message: 'No applications found for this user' });
+    }
+
+    // Update all applications for this user with the new status
+    const updatedApplications = await Application.updateMany(
+      { user: userId },          // Filter by userId
+      { $set: { status } }       // Only update the status field
+    );
+
+    return res.status(200).json({
+      message: 'Application statuses updated successfully',
+      updatedApplications,
+    });
+  } catch (error) {
+    console.error('Error updating application status:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
