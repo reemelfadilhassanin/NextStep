@@ -136,3 +136,39 @@ router.put('/user/:userId/status', authMiddleware, agentRoleMiddleware, async (r
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+//router.put('/:applicationId/status', authMiddleware, agentRoleMiddleware, updateApplicationStatus);
+router.put('/user/:userId/status/:jobId', authMiddleware, agentRoleMiddleware, async (req, res) => {
+  try {
+    const { userId, jobId } = req.params;  // Get userId and jobId from URL
+    const { status } = req.body;           // Get status from body
+
+    // Validate the status
+    if (!status) {
+      return res.status(400).json({ message: 'Status is required' });
+    }
+
+    // Find the specific application for the given user and job, populate the profile field and its nested fields
+    const application = await Application.findOne({ user: userId, job: jobId })
+      .populate('profile', 'experience education skills')  // Populate profile fields like experience, education, skills
+      .populate('job', 'title description');  // Optional: You can populate job details if needed
+
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found for this user and job' });
+    }
+
+    // Update the status of the specific application
+    application.status = status;
+    application.updatedAt = Date.now();  // Update the timestamp of the application
+
+    await application.save();
+
+    return res.status(200).json({
+      message: 'Application status updated successfully',
+      updatedApplication: application,
+    });
+  } catch (error) {
+    console.error('Error updating application status:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
