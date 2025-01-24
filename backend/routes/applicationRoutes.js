@@ -200,4 +200,54 @@ router.get('/:jobId', authMiddleware, agentRoleMiddleware, async (req, res) => {
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+router.post('/', authMiddleware, async (req, res) => {
+  try {
+    const { job, resume } = req.body;
+
+    // Ensure job and resume are provided
+    if (!job || !resume) {
+      return res.status(400).json({ message: 'Job and Resume are required.' });
+    }
+
+    // Fetch the user's profile (if it exists)
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found. Please create a profile first.' });
+    }
+
+    // Use the profile data (experience, education, skills, social links, etc.)
+    const { experience, education, skills, socialLinks } = profile;
+
+    // Create a new application
+    const newApplication = new Application({
+      job,
+      user: req.user.id,
+      profile: profile._id, // Reference to the profile
+      resume, // Use the provided resume
+      experience, // Include the profile's experience data
+      education, // Include the profile's education data
+      skills, // Include the profile's skills
+      socialLinks, // Include the profile's social links
+      status: 'applied', // Default status
+    });
+
+    // Save the application
+    const application = await newApplication.save();
+
+    return res.status(201).json({
+      message: 'Application submitted successfully',
+      application,
+    });
+  } catch (error) {
+    console.error('Error creating application:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+
+
+
+export default router;
+
 
